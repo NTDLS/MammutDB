@@ -1,6 +1,3 @@
-
 .vs/
-
-MamothDB.Server/bin/
-
-MamothDB.Server/obj/
+bin/
+obj/

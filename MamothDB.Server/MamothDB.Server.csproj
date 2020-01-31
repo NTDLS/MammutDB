@@ -11,5 +11,9 @@
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Mamoth.Common\Mamoth.Common.csproj" />
+  </ItemGroup>
+
 
 </Project>

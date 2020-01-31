@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MamothDB.Server", "MamothDB.Server\MamothDB.Server.csproj", "{28A8B13B-D132-4872-8B42-5C4EDF12181D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MamothDB.Server", "MamothDB.Server\MamothDB.Server.csproj", "{28A8B13B-D132-4872-8B42-5C4EDF12181D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamoth.Client", "Mamoth.Client\Mamoth.Client.csproj", "{97D64A0B-A848-4505-BB78-0FD7707D3EAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamoth.Common", "Mamoth.Common\Mamoth.Common.csproj", "{1C60FFBA-8F68-4C1D-801C-BEC2800E924D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamoth.TestHarness", "Mamoth.TestHarness\Mamoth.TestHarness.csproj", "{E3820C2B-88CD-4BC7-B642-7FD7D964DF0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{28A8B13B-D132-4872-8B42-5C4EDF12181D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28A8B13B-D132-4872-8B42-5C4EDF12181D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28A8B13B-D132-4872-8B42-5C4EDF12181D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97D64A0B-A848-4505-BB78-0FD7707D3EAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97D64A0B-A848-4505-BB78-0FD7707D3EAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97D64A0B-A848-4505-BB78-0FD7707D3EAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97D64A0B-A848-4505-BB78-0FD7707D3EAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C60FFBA-8F68-4C1D-801C-BEC2800E924D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C60FFBA-8F68-4C1D-801C-BEC2800E924D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C60FFBA-8F68-4C1D-801C-BEC2800E924D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C60FFBA-8F68-4C1D-801C-BEC2800E924D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3820C2B-88CD-4BC7-B642-7FD7D964DF0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3820C2B-88CD-4BC7-B642-7FD7D964DF0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3820C2B-88CD-4BC7-B642-7FD7D964DF0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3820C2B-88CD-4BC7-B642-7FD7D964DF0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
