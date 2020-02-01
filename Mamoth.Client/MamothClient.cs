@@ -9,7 +9,8 @@ namespace Mamoth.Client
     {
         public HttpClient Client { get; private set; }
         public LoginToken Token { get; set; }
-        public Security Security { get; private set; }
+        public SecurityClient Security { get; private set; }
+        public SchemaClient Schema { get; private set; }
 
         private void Initialize(string baseAddress, TimeSpan commandTimeout, string username = "", string password = "")
         {
@@ -19,7 +20,8 @@ namespace Mamoth.Client
 
             Token = null;
 
-            Security = new Security(this);
+            Security = new SecurityClient(this);
+            Schema = new SchemaClient(this);
 
             if (string.IsNullOrWhiteSpace(username) == false)
             {

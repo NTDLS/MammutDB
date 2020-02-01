@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MamothDB.Server.Core.Engine
 {
-    public class Security
+    public class SecurityEngine
     {
         private ServerCore _core;
 
-        public Security(ServerCore core)
+        public SecurityEngine(ServerCore core)
         {
             _core = core;
         }

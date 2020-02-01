@@ -38,7 +38,7 @@ namespace MamothDB.Server
                 throw new Exception("Root path is not specified.");
             }
 
-            builder.Register(c => new ServerCoreSettings(rootPath)).As<IServerCoreSettings>();
+            builder.Register(c => new StartupOptions(rootPath)).As<IStartupOptions>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.

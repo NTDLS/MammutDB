@@ -17,7 +17,7 @@ namespace MamothDB.Server.Controllers
 
         private readonly ILogger<DiagController> _logger;
 
-        public DiagController(ILogger<DiagController> logger, IServerCore core, IServerCoreSettings settings)
+        public DiagController(ILogger<DiagController> logger, IServerCore core)
         {
             _logger = logger;
             _core = core;
@@ -42,12 +42,12 @@ namespace MamothDB.Server.Controllers
             table.Append($" <td>{_core.Settings.ConfigFile}</td>");
             table.Append("</tr>");
             table.Append("<tr>");
-            table.Append(" <td><strong>DataPath</strong></td>");
-            table.Append($" <td>{_core.Settings.DataPath}</td>");
+            table.Append(" <td><strong>SchemaPath</strong></td>");
+            table.Append($" <td>{_core.Settings.SchemaPath}</td>");
             table.Append("</tr>");
             table.Append("<tr>");
-            table.Append(" <td><strong>UndoPath</strong></td>");
-            table.Append($" <td>{_core.Settings.UndoPath}</td>");
+            table.Append(" <td><strong>TransactionPath</strong></td>");
+            table.Append($" <td>{_core.Settings.TransactionPath}</td>");
             table.Append("</tr>");
             table.Append("</table>");
 

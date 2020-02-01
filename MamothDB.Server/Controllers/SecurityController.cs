@@ -21,7 +21,7 @@ namespace MamothDB.Server.Controllers
 
         private readonly ILogger<SecurityController> _logger;
 
-        public SecurityController(ILogger<SecurityController> logger, IServerCore core, IServerCoreSettings settings)
+        public SecurityController(ILogger<SecurityController> logger, IServerCore core)
         {
             _logger = logger;
             _core = core;
@@ -44,11 +44,11 @@ namespace MamothDB.Server.Controllers
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Login failed with an exception: " + ex.Message;
+                result.Message = "Call failed with an exception: " + ex.Message;
+                _logger.LogError(result.Message);
             }
             return result;
         }
-
 
         [HttpPost]
         public ActionResponseBase Logout([FromBody]ActionRequestBase action)
@@ -65,7 +65,8 @@ namespace MamothDB.Server.Controllers
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Logout failed with an exception: " + ex.Message;
+                result.Message = "Call failed with an exception: " + ex.Message;
+                _logger.LogError(result.Message);
             }
             return result;
         }

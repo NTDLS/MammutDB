@@ -48,6 +48,7 @@
     <Compile Include="Payload\Model\LoginToken.cs" />
     <Compile Include="Payload\Request\ActionRequestGenericObject.cs" />
     <Compile Include="Payload\Request\ActionRequestBase.cs" />
+    <Compile Include="Payload\Request\ActionRequestSchema.cs" />
     <Compile Include="Payload\Request\ActionRequestLogin.cs" />
     <Compile Include="Payload\Request\IActionRequest.cs" />
     <Compile Include="Payload\Response\ActionResponceLogin.cs" />
@@ -55,10 +56,12 @@
     <Compile Include="Payload\Response\ActionResponceUsers.cs" />
     <Compile Include="Payload\Response\ActionResponseBase.cs" />
     <Compile Include="Payload\Response\ActionResponseBoolean.cs" />
+    <Compile Include="Payload\Response\ActionResponseSchema.cs" />
     <Compile Include="Payload\Response\ActionResponseId.cs" />
     <Compile Include="Payload\Response\ActionResponseString.cs" />
     <Compile Include="Payload\Response\ActionResponseStrings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\SchemaParts.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

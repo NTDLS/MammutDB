@@ -5,11 +5,9 @@ using System.Threading.Tasks;
 
 namespace MamothDB.Server.Core.Interfaces
 {
-    public interface IServerCoreSettings
+    public interface IStartupOptions
     {
-        public string RootPath { get; }
+        public string RootPath { get; set; }
         public string ConfigFile { get; }
-        public string UndoPath { get; }
-        public string DataPath { get; }
     }
 }

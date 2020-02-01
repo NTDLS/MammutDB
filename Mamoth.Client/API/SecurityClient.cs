@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Mamoth.Client.API
 {
-    public class Security : MamothBase
+    public class SecurityClient : MamothBase
     {
         private MamothClient _client;
         private const string _apiBase = "api/Security";
 
-        public Security(MamothClient client)
+        public SecurityClient(MamothClient client)
             : base(client)
         {
             _client = client;
