@@ -6,9 +6,17 @@ using System.Threading.Tasks;
 
 namespace Mamoth.Common.Types
 {
-    public class SchemaParts
+    public class SchemaInfo
     {
-        public string Path { get; set; }
+        public string FullLogicalPath { get; set; }
+        public string LogicalParent { get; set; }
         public string Name { get; set; }
+        public string ParentDiskPath { get; set; }
+        public string FullDiskPath { get; set; }
+
+        public string SchemaCatalog => System.IO.Path.Combine(FullDiskPath, Constants.FileNames.SchemaCatalog);
+        public string ParentSchemaCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.FileNames.SchemaCatalog);
+        public string DocumentCatalog => System.IO.Path.Combine(FullDiskPath, Constants.FileNames.DocumentCatalog);
+        public string ParentDocumentCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.FileNames.DocumentCatalog);
     }
 }

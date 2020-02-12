@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mamoth.Client\Mamoth.Client.csproj" />
-    <ProjectReference Include="..\Mamoth.Common\Mamoth.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -24,31 +24,5 @@ namespace Mamoth.Common
             }
             return hash.ToString();
         }
-
-        /// <summary>
-        /// Splits a full schema into its path and name parts.
-        /// </summary>
-        /// <returns></returns>
-        public static SchemaParts SplitSchema(string schema)
-        {
-            schema  = schema.Trim(new char[] { ':' });
-
-            var parts = new SchemaParts()
-            {
-                Path = string.Empty,
-                Name = schema
-            };
-
-            int lastDelimiterIndex = schema.LastIndexOf(":");
-
-            if (lastDelimiterIndex > 0)
-            {
-                parts.Path = schema.Substring(0, lastDelimiterIndex);
-                parts.Name = schema.Substring(lastDelimiterIndex + 1);
-            }
-
-            return parts;
-        }
-
     }
 }
