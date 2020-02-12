@@ -1,5 +1,4 @@
-﻿using Mamoth.Common.Types;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 

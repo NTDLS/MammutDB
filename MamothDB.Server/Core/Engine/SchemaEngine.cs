@@ -1,7 +1,7 @@
 ﻿using Mamoth.Common;
 using Mamoth.Common.Payload.Model;
-using Mamoth.Common.Types;
 using MamothDB.Server.Core.Models;
+using MamothDB.Server.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,16 +48,17 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="schemaPath"></param>
         /// <returns></returns>
-        public Guid Create(string schema)
+        public BasicSchemaInfo Create(string logicalSchemaPath)
         {
-            var schemaInfo = Parse(schema);
+            var schemaInfo = Parse(logicalSchemaPath);
 
             var collection = _core.IO.GetJsonCached<MetaSchemaCollection>(schemaInfo.ParentSchemaCatalog);
 
             var existingSchema = collection.GetByName(schemaInfo.Name);
             if (existingSchema != null)
             {
-                return existingSchema.Id; //No need to hassle the user, just return the schema ID if it already exists.
+                //No need to hassle the user with an exception, just return the schema ID if it already exists.
+                return new BasicSchemaInfo { Id = existingSchema.Id, Name = existingSchema.Name, LogicalPath = schemaInfo.FullLogicalPath };
                 //throw new Exception("The schema already exists.");
             }
 
@@ -72,33 +73,53 @@ namespace MamothDB.Server.Core.Engine
             collection.Add(metaSchema);
             _core.IO.PutJsonCached(schemaInfo.ParentSchemaCatalog, collection);
 
-            return metaSchema.Id;
+            return new BasicSchemaInfo { Id = metaSchema.Id, Name = metaSchema.Name, LogicalPath = schemaInfo.FullLogicalPath };
+        }
+
+        /// <summary>
+        /// Gets an existing schema name and id by name.
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public BasicSchemaInfo Get(string logicalSchemaPath)
+        {
+            var schemaInfo = Parse(logicalSchemaPath);
+
+            var collection = _core.IO.GetJsonCached<MetaSchemaCollection>(schemaInfo.ParentSchemaCatalog);
+
+            var existingSchema = collection.GetByName(schemaInfo.Name);
+            if (existingSchema != null)
+            {
+                return new BasicSchemaInfo { Id = existingSchema.Id, Name = existingSchema.Name, LogicalPath = schemaInfo.FullLogicalPath };
+            }
+
+            return new BasicSchemaInfo();
         }
 
         /// <summary>
         /// Splits a full schema into its path and name parts.
         /// </summary>
         /// <returns></returns>
-        public SchemaInfo Parse(string schema)
+        public SchemaInfo Parse(string logicalSchemaPath)
         {
-            schema = schema.Trim(new char[] { ':' }).Replace("::", ":");
+            logicalSchemaPath = logicalSchemaPath.Trim(new char[] { ':' }).Replace("::", ":");
 
             var parts = new SchemaInfo();
 
-            int lastDelimiterIndex = schema.LastIndexOf(":");
+            int lastDelimiterIndex = logicalSchemaPath.LastIndexOf(":");
 
             if (lastDelimiterIndex > 0)
             {
-                parts.LogicalParent = schema.Substring(0, lastDelimiterIndex);
-                parts.Name = schema.Substring(lastDelimiterIndex + 1);
+                parts.LogicalParent = logicalSchemaPath.Substring(0, lastDelimiterIndex);
+                parts.Name = logicalSchemaPath.Substring(lastDelimiterIndex + 1);
                 parts.FullLogicalPath = $"{parts.LogicalParent}:{parts.Name}".Replace("::", ":");
                 parts.ParentDiskPath = System.IO.Path.Join(_core.Settings.SchemaPath, parts.LogicalParent.Replace(':', '\\'));
                 parts.FullDiskPath = System.IO.Path.Join(parts.ParentDiskPath, parts.Name);
             }
             else {
-                parts.Name = schema;
+                parts.Name = logicalSchemaPath;
                 parts.LogicalParent = "";
-                parts.FullLogicalPath = schema;
+                parts.FullLogicalPath = logicalSchemaPath;
                 parts.ParentDiskPath = _core.Settings.SchemaPath;
                 parts.FullDiskPath = System.IO.Path.Join(_core.Settings.SchemaPath, parts.Name);
             }

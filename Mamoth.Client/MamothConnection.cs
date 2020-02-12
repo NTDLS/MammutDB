@@ -6,10 +6,10 @@ namespace Mamoth.Client
 {
     public class MamothConnection : IDisposable
     {
-        public MamothClient Client { get; set; }
+        public MamothClientPooled Client { get; set; }
         public MamothConnectionPool _pool { get; set; }
 
-        public MamothConnection(MamothConnectionPool pool, MamothClient client)
+        public MamothConnection(MamothConnectionPool pool, MamothClientPooled client)
         {
             Client = client;
             _pool = pool;

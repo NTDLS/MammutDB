@@ -10,9 +10,9 @@ namespace Mamoth.Client
 {
     public class MamothBase
     {
-        private MamothClient _mamothClient;
+        private MamothClientBase _mamothClient;
 
-        public MamothBase(MamothClient client)
+        public MamothBase(MamothClientBase client)
         {
             this._mamothClient = client;
         }

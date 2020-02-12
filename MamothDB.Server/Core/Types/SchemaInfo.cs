@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Mamoth.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mamoth.Common.Types
+namespace MamothDB.Server.Types
 {
     public class SchemaInfo
     {

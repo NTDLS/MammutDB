@@ -19,6 +19,10 @@ namespace Mamoth.TestHarness
                     connection.Client.Schema.Create("AR:Customers");
                     connection.Client.Schema.Create("AR:Customers:Prospects");
                     connection.Client.Schema.Create("AR:Customers:Contracts");
+
+
+                    var result = connection.Client.Schema.Get("AR:Sales");
+                    Console.WriteLine($"Name: {result.Name}, Id: {result.Id}, Path: {result.Path}");
                 }
             }
 
@@ -39,7 +43,6 @@ namespace Mamoth.TestHarness
                 client.Logout();
             }
             */
-
         }
     }
 }

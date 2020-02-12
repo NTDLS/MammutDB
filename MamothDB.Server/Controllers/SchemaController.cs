@@ -36,8 +36,11 @@ namespace MamothDB.Server.Controllers
 
             try
             {
-                result.Name = action.Name;
-                result.Id = _core.Schema.Create(action.Name);
+                var schemaInfo = _core.Schema.Create(action.Path);
+
+                result.Name = schemaInfo.Name;
+                result.Id = schemaInfo.Id;
+                result.Path = schemaInfo.LogicalPath;
                 result.Success = true;
             }
             catch (Exception ex)
@@ -48,5 +51,32 @@ namespace MamothDB.Server.Controllers
             }
             return result;
         }
+
+        [HttpPost]
+        public ActionResponseSchema Get([FromBody]ActionRequestSchema action)
+        {
+            _logger.LogDebug($"API:{MamothUtility.GetCurrentMethod()}");
+
+            var result = new ActionResponseSchema();
+
+            try
+            {
+                var schemaInfo = _core.Schema.Get(action.Path);
+                result.Name = schemaInfo.Name;
+                result.Id = schemaInfo.Id;
+                result.Path = schemaInfo.LogicalPath;
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Call failed with an exception: " + ex.Message;
+                _logger.LogError(result.Message);
+            }
+            return result;
+        }
+
+
+
     }
 }

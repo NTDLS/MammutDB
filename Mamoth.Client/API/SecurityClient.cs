@@ -10,10 +10,10 @@ namespace Mamoth.Client.API
 {
     public class SecurityClient : MamothBase
     {
-        private MamothClient _client;
+        private MamothClientBase _client;
         private const string _apiBase = "api/Security";
 
-        public SecurityClient(MamothClient client)
+        public SecurityClient(MamothClientBase client)
             : base(client)
         {
             _client = client;

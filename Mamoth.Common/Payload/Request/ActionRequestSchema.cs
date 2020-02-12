@@ -11,6 +11,6 @@ namespace Mamoth.Common.Payload.Request
         public ActionRequestSchema()
             : base(Guid.Empty) { }
 
-        public string Name { get; set; }
+        public string Path { get; set; }
     }
 }

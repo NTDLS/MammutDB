@@ -4,6 +4,22 @@ using System.Text;
 
 namespace Mamoth.Client
 {
+    /*
+    using (var pool = new MamothConnectionPool("https://localhost:5001", "root", ""))
+    {
+        using (var connection = pool.GetConnection())
+        {
+            connection.Client.Schema.Create("AR");
+            connection.Client.Schema.Create("AR:Sales");
+            connection.Client.Schema.Create("AR:Sales:Orders");
+            connection.Client.Schema.Create("AR:Sales:People");
+            connection.Client.Schema.Create("AR:Sales:People:Terminated");
+            connection.Client.Schema.Create("AR:Customers");
+            connection.Client.Schema.Create("AR:Customers:Prospects");
+            connection.Client.Schema.Create("AR:Customers:Contracts");
+        }
+    }
+    */
     public class MamothConnectionPool: IDisposable
     {
         private readonly string _baseAddress;
@@ -12,8 +28,8 @@ namespace Mamoth.Client
         private readonly string _password;
         private readonly int _maxConnections = 100;
 
-        private List<MamothClient> _pool = new List<MamothClient>();
-        private HashSet<MamothClient> _inUse = new HashSet<MamothClient>();
+        private List<MamothClientPooled> _pool = new List<MamothClientPooled>();
+        private HashSet<MamothClientPooled> _inUse = new HashSet<MamothClientPooled>();
 
         public MamothConnectionPool(string baseAddress, string username, string password)
         {
@@ -71,7 +87,7 @@ namespace Mamoth.Client
                 throw new Exception("The connnection pool has reached its maximum size.");
             }
 
-            var newClient = new MamothClient(_baseAddress, _commandTimeout, _username, _password);
+            var newClient = new MamothClientPooled(_baseAddress, _commandTimeout, _username, _password);
 
             _inUse.Add(newClient);
             _pool.Add(newClient);
