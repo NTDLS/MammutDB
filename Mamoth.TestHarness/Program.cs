@@ -7,6 +7,22 @@ namespace Mamoth.TestHarness
     {
         static void Main(string[] args)
         {
+            using (var pool = new MamothConnectionPool("https://localhost:5001", "root", ""))
+            {
+                using (var connection = pool.GetConnection())
+                {
+                    connection.Client.Schema.Create("AR");
+                    connection.Client.Schema.Create("AR:Sales");
+                    connection.Client.Schema.Create("AR:Sales:Orders");
+                    connection.Client.Schema.Create("AR:Sales:People");
+                    connection.Client.Schema.Create("AR:Sales:People:Terminated");
+                    connection.Client.Schema.Create("AR:Customers");
+                    connection.Client.Schema.Create("AR:Customers:Prospects");
+                    connection.Client.Schema.Create("AR:Customers:Contracts");
+                }
+            }
+
+            /*
             using (var client = new MamothClient("https://localhost:5001", "root", ""))
             {
                 client.Schema.Create("AR");
@@ -22,6 +38,8 @@ namespace Mamoth.TestHarness
                 //Console.WriteLine($"{serverVersion.Name} v{serverVersion.Version}");
                 client.Logout();
             }
+            */
+
         }
     }
 }

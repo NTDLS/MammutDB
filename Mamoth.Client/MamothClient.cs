@@ -30,12 +30,24 @@ namespace Mamoth.Client
         }
 
         #region ~CTor
+
         public void Dispose()
         {
-            if (this.Token.IsValid)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                this.Logout();
+                // get rid of managed resources:
+                if (this.Token.IsValid)
+                {
+                    this.Logout();
+                }
             }
+            // get rid of unmanaged resources:
         }
 
         public MamothClient(string baseAddress, TimeSpan commandTimeout)

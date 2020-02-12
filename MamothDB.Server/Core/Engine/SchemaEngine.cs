@@ -52,13 +52,13 @@ namespace MamothDB.Server.Core.Engine
         {
             var schemaInfo = Parse(schema);
 
-            //TODO: Check if the schema exists first.
-
             var collection = _core.IO.GetJsonCached<MetaSchemaCollection>(schemaInfo.ParentSchemaCatalog);
 
-            if (collection.GetByName(schemaInfo.Name) != null)
+            var existingSchema = collection.GetByName(schemaInfo.Name);
+            if (existingSchema != null)
             {
-                throw new Exception("The schema already exists.");
+                return existingSchema.Id; //No need to hassle the user, just return the schema ID if it already exists.
+                //throw new Exception("The schema already exists.");
             }
 
             var metaSchema = new MetaSchema()
@@ -72,7 +72,7 @@ namespace MamothDB.Server.Core.Engine
             collection.Add(metaSchema);
             _core.IO.PutJsonCached(schemaInfo.ParentSchemaCatalog, collection);
 
-            return Guid.Empty;
+            return metaSchema.Id;
         }
 
         /// <summary>
