@@ -10,6 +10,6 @@ namespace MamothDB.Server.Core.Models
     /// </summary>
     public class MetaDocumentCollection
     {
-        List<MetaDocument> Collection = new List<MetaDocument>();
+        List<MetaDocument> Catalog = new List<MetaDocument>();
     }
 }

@@ -48,13 +48,6 @@ namespace MamothDB.Server.Core
                 Directory.CreateDirectory(Settings.RootPath);
             }
 
-            if (Directory.Exists(Settings.SchemaPath) == false)
-            {
-                Directory.CreateDirectory(Settings.SchemaPath);
-                File.WriteAllText(Path.Join(Settings.SchemaPath, Constants.FileNames.SchemaCatalog), JsonConvert.SerializeObject(new MetaSchemaCollection()));
-                File.WriteAllText(Path.Join(Settings.SchemaPath, Constants.FileNames.DocumentCatalog), JsonConvert.SerializeObject(new MetaDocumentCollection()));
-            }
-
             if (Directory.Exists(Settings.TransactionPath) == false)
             {
                 Directory.CreateDirectory(Settings.TransactionPath);
