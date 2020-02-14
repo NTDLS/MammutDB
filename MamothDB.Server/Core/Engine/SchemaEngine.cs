@@ -49,7 +49,7 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="schemaPath"></param>
         /// <returns></returns>
-        public BasicSchemaInfo Create(string logicalSchemaPath)
+        public BasicSchemaInfo Create(MetaSession session, string logicalSchemaPath)
         {
             var schemaInfo = Parse(logicalSchemaPath);
 
@@ -82,7 +82,7 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
-        public BasicSchemaInfo Get(string logicalSchemaPath)
+        public BasicSchemaInfo Get(MetaSession session, string logicalSchemaPath)
         {
             var schemaInfo = Parse(logicalSchemaPath);
 
@@ -127,6 +127,5 @@ namespace MamothDB.Server.Core.Engine
 
             return parts;
         }
-
     }
 }

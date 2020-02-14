@@ -54,7 +54,6 @@ namespace Mamoth.Client.API
         /// <returns></returns>
         public async Task<List<User>> GetLoginsAsync()
         {
-
             return (await SubmitAsync<ActionRequestBase, ActionResponceUsers>
                 ($"{_apiBase}/ListUsers", new ActionRequestBase(_client.Token.SessionId))).List;
         }

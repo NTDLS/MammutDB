@@ -26,7 +26,7 @@ namespace Mamoth.Client.API
         /// <returns></returns>
         public ActionResponseSchema Create(string logicalSchemaPath)
         {
-            var action = new ActionRequestSchema()
+            var action = new ActionRequestSchema(_client.Token.SessionId)
             {
                 Path = logicalSchemaPath
             };
@@ -41,7 +41,7 @@ namespace Mamoth.Client.API
         /// <returns></returns>
         public async Task<ActionResponseSchema> CreateAsync(string logicalSchemaPath)
         {
-            var action = new ActionRequestSchema()
+            var action = new ActionRequestSchema(_client.Token.SessionId)
             {
                 Path = logicalSchemaPath
             };
@@ -56,7 +56,7 @@ namespace Mamoth.Client.API
         /// <returns></returns>
         public ActionResponseSchema Get(string logicalSchemaPath)
         {
-            var action = new ActionRequestSchema()
+            var action = new ActionRequestSchema(_client.Token.SessionId)
             {
                 Path = logicalSchemaPath
             };
@@ -71,7 +71,7 @@ namespace Mamoth.Client.API
         /// <returns></returns>
         public async Task<ActionResponseSchema> GetAsync(string logicalSchemaPath)
         {
-            var action = new ActionRequestSchema()
+            var action = new ActionRequestSchema(_client.Token.SessionId)
             {
                 Path = logicalSchemaPath
             };

@@ -59,7 +59,9 @@ namespace MamothDB.Server.Controllers
 
             try
             {
-                _core.Security.Logout(action.SessionId);
+                var session = _core.Session.GetById(action.SessionId);
+
+                _core.Security.Logout(session);
                 result.Success = true;
             }
             catch (Exception ex)

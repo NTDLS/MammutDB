@@ -35,5 +35,25 @@ namespace MamothDB.Server.Core.Engine
 
             return session;
         }
+
+        public void Remove(MetaSession session)
+        {
+            _collection.Catalog.Remove(session);
+        }
+
+        /// <summary>
+        /// Gets a session by its id. Throws an exception if it is not found.
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
+        public MetaSession GetById(Guid sessionId)
+        {
+            var session = _collection.Catalog.Find(o => o.SessionId == sessionId);
+            if (session == null)
+            {
+                throw new Exception("Invalid session.");
+            }
+            return session;
+        }
     }
 }

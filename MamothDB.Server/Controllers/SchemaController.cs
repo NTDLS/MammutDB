@@ -36,8 +36,9 @@ namespace MamothDB.Server.Controllers
 
             try
             {
-                var schemaInfo = _core.Schema.Create(action.Path);
+                var session = _core.Session.GetById(action.SessionId);
 
+                var schemaInfo = _core.Schema.Create(session, action.Path);
                 result.Name = schemaInfo.Name;
                 result.Id = schemaInfo.Id;
                 result.Path = schemaInfo.LogicalPath;
@@ -61,7 +62,9 @@ namespace MamothDB.Server.Controllers
 
             try
             {
-                var schemaInfo = _core.Schema.Get(action.Path);
+                var session = _core.Session.GetById(action.SessionId);
+
+                var schemaInfo = _core.Schema.Get(session, action.Path);
                 result.Name = schemaInfo.Name;
                 result.Id = schemaInfo.Id;
                 result.Path = schemaInfo.LogicalPath;

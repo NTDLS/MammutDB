@@ -2,9 +2,7 @@
 using MamothDB.Server.Core.Models;
 using MamothDB.Server.Core.Models.Persist;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MamothDB.Server.Core.Engine
 {
@@ -33,9 +31,9 @@ namespace MamothDB.Server.Core.Engine
             throw new Exception("Login failed.");
         }
 
-        public void Logout(Guid sessionId)
+        public void Logout(MetaSession session)
         {
-            //Logout
+            _core.Session.Remove(session);
         }
     }
 }
