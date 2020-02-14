@@ -40,8 +40,8 @@ namespace MamothDB.Server.Core.Engine
                 Directory.CreateDirectory(schemaInfo.FullDiskPath);
             }
 
-            _core.IO.PutJsonCached(schemaInfo.SchemaCatalog, new MetaSchemaCollection());
-            _core.IO.PutJsonCached(schemaInfo.DocumentCatalog, new MetaDocumentCollection());
+            _core.IO.PutJsonDirty(schemaInfo.SchemaCatalog, new MetaSchemaCollection());
+            _core.IO.PutJsonDirty(schemaInfo.DocumentCatalog, new MetaDocumentCollection());
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace MamothDB.Server.Core.Engine
         {
             var schemaInfo = Parse(logicalSchemaPath);
 
-            var collection = _core.IO.GetJsonCached<MetaSchemaCollection>(schemaInfo.ParentSchemaCatalog);
+            var collection = _core.IO.GetJson<MetaSchemaCollection>(session, schemaInfo.ParentSchemaCatalog);
 
             var existingSchema = collection.GetByName(schemaInfo.Name);
             if (existingSchema != null)
@@ -72,7 +72,7 @@ namespace MamothDB.Server.Core.Engine
             InitializeNewSchemaDirectory(schemaInfo);
 
             collection.Add(metaSchema);
-            _core.IO.PutJsonCached(schemaInfo.ParentSchemaCatalog, collection);
+            _core.IO.PutJson(session, schemaInfo.ParentSchemaCatalog, collection);
 
             return new BasicSchemaInfo { Id = metaSchema.Id, Name = metaSchema.Name, LogicalPath = schemaInfo.FullLogicalPath };
         }
@@ -86,7 +86,7 @@ namespace MamothDB.Server.Core.Engine
         {
             var schemaInfo = Parse(logicalSchemaPath);
 
-            var collection = _core.IO.GetJsonCached<MetaSchemaCollection>(schemaInfo.ParentSchemaCatalog);
+            var collection = _core.IO.GetJson<MetaSchemaCollection>(session, schemaInfo.ParentSchemaCatalog);
 
             var existingSchema = collection.GetByName(schemaInfo.Name);
             if (existingSchema != null)

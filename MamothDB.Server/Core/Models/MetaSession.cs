@@ -13,6 +13,20 @@ namespace MamothDB.Server.Core.Models
         public Guid SessionId { get; set; }
         public Guid LoginId { get; set; }
         public string Username { get; set; }
+        public MetaTransaction CurrentTransaction { get; set; }
+
+        public void CommitImplicitTransaction()
+        {
+            if (CurrentTransaction == null)
+            {
+                throw new Exception("No transaction is active.");
+            }
+
+            if (CurrentTransaction.IsImplicit)
+            {
+                CurrentTransaction.Commit();
+            }
+        }
 
         public static MetaSession FromPayload(Mamoth.Common.Payload.Model.Session login)
         {

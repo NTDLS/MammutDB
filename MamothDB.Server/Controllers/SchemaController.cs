@@ -33,11 +33,10 @@ namespace MamothDB.Server.Controllers
             _logger.LogDebug($"API:{MamothUtility.GetCurrentMethod()}");
 
             var result = new ActionResponseSchema();
+            var session = _core.Session.ObtainSession(action.SessionId);
 
             try
             {
-                var session = _core.Session.GetById(action.SessionId);
-
                 var schemaInfo = _core.Schema.Create(session, action.Path);
                 result.Name = schemaInfo.Name;
                 result.Id = schemaInfo.Id;
@@ -50,6 +49,10 @@ namespace MamothDB.Server.Controllers
                 result.Message = "Call failed with an exception: " + ex.Message;
                 _logger.LogError(result.Message);
             }
+            finally
+            {
+                session.CommitImplicitTransaction();
+            }
             return result;
         }
 
@@ -60,10 +63,10 @@ namespace MamothDB.Server.Controllers
 
             var result = new ActionResponseSchema();
 
+            var session = _core.Session.ObtainSession(action.SessionId);
+
             try
             {
-                var session = _core.Session.GetById(action.SessionId);
-
                 var schemaInfo = _core.Schema.Get(session, action.Path);
                 result.Name = schemaInfo.Name;
                 result.Id = schemaInfo.Id;
@@ -76,10 +79,12 @@ namespace MamothDB.Server.Controllers
                 result.Message = "Call failed with an exception: " + ex.Message;
                 _logger.LogError(result.Message);
             }
+            finally
+            {
+                session.CommitImplicitTransaction();
+            }
             return result;
         }
-
-
 
     }
 }

@@ -17,6 +17,7 @@ namespace MamothDB.Server.Core
         public SchemaEngine Schema { get; private set; }
         public SecurityEngine Security { get; private set; }
         public SessionEngine Session { get; private set; }
+        public TransactionEngine Transaction { get; private set; }
 
         public ServerCore(IStartupOptions startOptions, ILogger<ServerCore> logger)
         {
@@ -90,6 +91,9 @@ namespace MamothDB.Server.Core
 
             Logger.LogInformation("Initializing session manager.");
             Session = new SessionEngine(this);
+
+            Logger.LogInformation("Initializing transaction manager.");
+            Transaction = new TransactionEngine(this);
         }
     }
 }

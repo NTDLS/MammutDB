@@ -17,7 +17,7 @@ namespace MamothDB.Server.Core.Engine
 
         public Session Login(Login login)
         {
-            var loginConnection = _core.IO.GetJsonCached<MetaLoginCollection>(_core.Settings.LoginFile);
+            var loginConnection = _core.IO.GetJsonDirty<MetaLoginCollection>(_core.Settings.LoginFile);
 
             var foundLogin = (from o in loginConnection.Catalog
                               where o.Username.ToLower() == login.Username.ToLower() && o.PasswordHash.ToLower() == login.PasswordHash.ToLower()

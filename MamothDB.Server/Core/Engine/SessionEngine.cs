@@ -42,17 +42,23 @@ namespace MamothDB.Server.Core.Engine
         }
 
         /// <summary>
-        /// Gets a session by its id. Throws an exception if it is not found.
+        /// Gets a session by its id and enlists in implicit transaction if one is not already open. Throws an exception if session is not found.
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        public MetaSession GetById(Guid sessionId)
+        public MetaSession ObtainSession(Guid sessionId)
         {
             var session = _collection.Catalog.Find(o => o.SessionId == sessionId);
             if (session == null)
             {
                 throw new Exception("Invalid session.");
             }
+
+            if (session.CurrentTransaction == null)
+            {
+                _core.Transaction.EnlistImplicit(session);
+            }
+
             return session;
         }
     }

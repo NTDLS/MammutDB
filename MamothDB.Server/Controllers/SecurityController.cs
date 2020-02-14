@@ -57,10 +57,10 @@ namespace MamothDB.Server.Controllers
 
             var result = new ActionResponseBase();
 
+            var session = _core.Session.ObtainSession(action.SessionId);
+
             try
             {
-                var session = _core.Session.GetById(action.SessionId);
-
                 _core.Security.Logout(session);
                 result.Success = true;
             }
@@ -69,6 +69,10 @@ namespace MamothDB.Server.Controllers
                 result.Success = false;
                 result.Message = "Call failed with an exception: " + ex.Message;
                 _logger.LogError(result.Message);
+            }
+            finally
+            {
+                session.CommitImplicitTransaction();
             }
             return result;
         }

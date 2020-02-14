@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using MamothDB.Server.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace MamothDB.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public T GetJsonCached<T>(string filePath)
+        public T GetJson<T>(MetaSession session, string filePath)
         {
             string key = FileSystemPathToKey(filePath);
 
@@ -61,7 +62,7 @@ namespace MamothDB.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public T GetJsonDirect<T>(string filePath)
+        public T GetJsonDirty<T>(string filePath)
         {
             return JsonConvert.DeserializeObject<T>(File.ReadAllText(filePath));
         }
@@ -72,7 +73,7 @@ namespace MamothDB.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <param name="deserializedObject"></param>
-        public void PutJsonCached<T>(string filePath, T deserializedObject)
+        public void PutJson<T>(MetaSession session, string filePath, T deserializedObject)
         {
             string key = FileSystemPathToKey(filePath);
 
@@ -95,7 +96,7 @@ namespace MamothDB.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <param name="deserializedObject"></param>
-        public void PutJsonDirect<T>(string filePath, T deserializedObject)
+        public void PutJsonDirty<T>(string filePath, T deserializedObject)
         {
             File.WriteAllText(filePath, JsonConvert.SerializeObject(deserializedObject));
         }
@@ -106,7 +107,7 @@ namespace MamothDB.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public T GetPBufDirect<T>(string filePath)
+        public T GetPBufDirty<T>(string filePath)
         {
             using (var file = File.OpenRead(filePath))
             {
@@ -120,7 +121,7 @@ namespace MamothDB.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public T GetPBufCached<T>(string filePath)
+        public T GetPBuf<T>(MetaSession session, string filePath)
         {
             string key = FileSystemPathToKey(filePath);
 
@@ -140,7 +141,7 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="deserializedObject"></param>
-        public void PutPBufDirect<T>(string filePath, T deserializedObject)
+        public void PutPBufDirty<T>(string filePath, T deserializedObject)
         {
             using (var file = File.Create(filePath))
             {
@@ -153,7 +154,7 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="deserializedObject"></param>
-        public void PutPBufCached<T>(string filePath, T deserializedObject)
+        public void PutPBuf<T>(MetaSession session, string filePath, T deserializedObject)
         {
             string key = FileSystemPathToKey(filePath);
 
