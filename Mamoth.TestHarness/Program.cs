@@ -7,7 +7,7 @@ namespace Mamoth.TestHarness
     {
         static void Main(string[] args)
         {
-            using (var pool = new MamothConnectionPool("https://localhost:5001", "root", ""))
+            using (var pool = new MamothConnectionPool("https://localhost:5001", "root", "p@ssWord!"))
             {
                 using (var connection = pool.GetConnection())
                 {
@@ -20,14 +20,13 @@ namespace Mamoth.TestHarness
                     connection.Client.Schema.Create("AR:Customers:Prospects");
                     connection.Client.Schema.Create("AR:Customers:Contracts");
 
-
                     var result = connection.Client.Schema.Get("AR:Sales");
                     Console.WriteLine($"Name: {result.Name}, Id: {result.Id}, Path: {result.Path}");
                 }
             }
 
             /*
-            using (var client = new MamothClient("https://localhost:5001", "root", ""))
+            using (var client = new MamothClient("https://localhost:5001", "root", "p@ssWord!"))
             {
                 client.Schema.Create("AR");
                 client.Schema.Create("AR:Sales");

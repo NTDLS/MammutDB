@@ -1,4 +1,6 @@
 ﻿using Mamoth.Common.Payload.Model;
+using MamothDB.Server.Core.Models;
+using MamothDB.Server.Core.Models.Persist;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +19,15 @@ namespace MamothDB.Server.Core.Engine
 
         public Session Login(Login login)
         {
-            if (login.Username == "root" && login.PasswordHash == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+            var loginConnection = _core.IO.GetJsonCached<MetaLoginCollection>(_core.Settings.LoginFile);
+
+            var foundLogin = (from o in loginConnection.Catalog
+                              where o.Username.ToLower() == login.Username.ToLower() && o.PasswordHash.ToLower() == login.PasswordHash.ToLower()
+                              select o).FirstOrDefault();
+
+            if (foundLogin != null)
             {
-
-                var session = new Session()
-                {
-                    SessionId = Guid.NewGuid(),
-                    LoginId = Guid.Empty
-                };
-
-                return session;
+                return MetaSession.ToPayload(_core.Session.Add(foundLogin));
             }
 
             throw new Exception("Login failed.");

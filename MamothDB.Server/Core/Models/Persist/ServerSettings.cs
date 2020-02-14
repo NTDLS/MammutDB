@@ -1,7 +1,7 @@
 ﻿using MamothDB.Server.Core.Interfaces;
 using Newtonsoft.Json;
 
-namespace MamothDB.Server.Core.Models
+namespace MamothDB.Server.Core.Models.Persist
 {
     public class ServerSettings
     {
@@ -26,16 +26,26 @@ namespace MamothDB.Server.Core.Models
         {
             get
             {
-                return System.IO.Path.Join(RootPath, "_server.json");
+                return System.IO.Path.Join(RootPath, Constants.Filesystem.ServerSettings);
             }
         }
+
+        [JsonIgnore]
+        public string LoginFile
+        {
+            get
+            {
+                return System.IO.Path.Join(RootPath, Constants.Filesystem.LoginCatalog);
+            }
+        }
+        
 
         [JsonIgnore]
         public string TransactionPath
         {
             get
             {
-                return System.IO.Path.Join(RootPath, "_transaction");
+                return System.IO.Path.Join(RootPath, Constants.Filesystem.TransactionDirectory);
             }
         }
 
@@ -44,7 +54,7 @@ namespace MamothDB.Server.Core.Models
         {
             get
             {
-                return System.IO.Path.Join(RootPath, "_schema");
+                return System.IO.Path.Join(RootPath, Constants.Filesystem.SchemaDirectory);
             }
         }
     }

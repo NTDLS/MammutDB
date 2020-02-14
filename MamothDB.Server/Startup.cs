@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Autofac.Extensions.DependencyInjection;
+using MamothDB.Server.Core.Models.Persist;
 
 namespace MamothDB.Server
 {

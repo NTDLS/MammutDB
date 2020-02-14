@@ -1,4 +1,5 @@
 ﻿using Mamoth.Common;
+using MamothDB.Server.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace MamothDB.Server.Types
         public string ParentDiskPath { get; set; }
         public string FullDiskPath { get; set; }
 
-        public string SchemaCatalog => System.IO.Path.Combine(FullDiskPath, Constants.FileNames.SchemaCatalog);
-        public string ParentSchemaCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.FileNames.SchemaCatalog);
-        public string DocumentCatalog => System.IO.Path.Combine(FullDiskPath, Constants.FileNames.DocumentCatalog);
-        public string ParentDocumentCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.FileNames.DocumentCatalog);
+        public string SchemaCatalog => System.IO.Path.Combine(FullDiskPath, Constants.Filesystem.SchemaCatalog);
+        public string ParentSchemaCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.Filesystem.SchemaCatalog);
+        public string DocumentCatalog => System.IO.Path.Combine(FullDiskPath, Constants.Filesystem.DocumentCatalog);
+        public string ParentDocumentCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.Filesystem.DocumentCatalog);
     }
 }
