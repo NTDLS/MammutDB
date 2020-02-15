@@ -38,6 +38,18 @@ namespace MamothDB.Server.Core.Engine
             return path.ToLower();
         }
 
+        public bool DirectoryExists(MetaSession session, string path)
+        {
+            //TODO: need to track this as a lock:
+            return Directory.Exists(path);
+        }
+
+        public void CreateDirectory(MetaSession session, string path)
+        {
+            session.CurrentTransaction.RecordCreateDirectory(path);
+            Directory.CreateDirectory(path);
+        }
+
         /// <summary>
         /// Reads JSON data from the disk WITH caching but without transactions.
         /// </summary>
@@ -86,6 +98,8 @@ namespace MamothDB.Server.Core.Engine
             };
 
             _memCache.Set<T>(key, deserializedObject, options);
+
+            session.CurrentTransaction.RecordFileWrite(filePath);
 
             File.WriteAllText(filePath, serialized);
         }
@@ -159,6 +173,8 @@ namespace MamothDB.Server.Core.Engine
             string key = FileSystemPathToKey(filePath);
 
             long serializedLength = 0;
+
+            session.CurrentTransaction.RecordFileWrite(filePath);
 
             using (var file = File.Create(filePath))
             {

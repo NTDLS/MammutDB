@@ -21,15 +21,15 @@ namespace MamothDB.Server.Core.Engine
 
             if (Directory.Exists(_core.Settings.SchemaPath) == false)
             {
-                InitializeNewSchemaDirectory(Parse(":"));
+                InitializeNewSchemaDirectoryDirty(Parse(":"));
             }
         }
 
         /// <summary>
-        /// Creates a new schema directory and creates all necessary files withing it.
+        /// //This shoule only be called when creating the initial structure at first ever server startup.
         /// </summary>
         /// <param name="schemaInfo"></param>
-        private void InitializeNewSchemaDirectory(SchemaInfo schemaInfo)
+        private void InitializeNewSchemaDirectoryDirty(SchemaInfo schemaInfo)
         {
             if (Directory.Exists(schemaInfo.ParentDiskPath) == false)
             {
@@ -42,6 +42,21 @@ namespace MamothDB.Server.Core.Engine
 
             _core.IO.PutJsonDirty(schemaInfo.SchemaCatalog, new MetaSchemaCollection());
             _core.IO.PutJsonDirty(schemaInfo.DocumentCatalog, new MetaDocumentCollection());
+        }
+
+        private void InitializeNewSchemaDirectory(MetaSession session, SchemaInfo schemaInfo)
+        {
+            if (_core.IO.DirectoryExists(session, schemaInfo.ParentDiskPath) == false)
+            {
+                _core.IO.CreateDirectory(session, schemaInfo.ParentDiskPath);
+            }
+            if (_core.IO.DirectoryExists(session, schemaInfo.FullDiskPath) == false)
+            {
+                _core.IO.CreateDirectory(session, schemaInfo.FullDiskPath);
+            }
+
+            _core.IO.PutJson(session, schemaInfo.SchemaCatalog, new MetaSchemaCollection());
+            _core.IO.PutJson(session, schemaInfo.DocumentCatalog, new MetaDocumentCollection());
         }
 
         /// <summary>
@@ -69,7 +84,7 @@ namespace MamothDB.Server.Core.Engine
                 Name = schemaInfo.Name
             };
 
-            InitializeNewSchemaDirectory(schemaInfo);
+            InitializeNewSchemaDirectoryDirty(schemaInfo);
 
             collection.Add(metaSchema);
             _core.IO.PutJson(session, schemaInfo.ParentSchemaCatalog, collection);

@@ -24,7 +24,7 @@ namespace MamothDB.Server.Core.Engine
             {
                 throw new Exception("Transaction is already open.");
             }
-            return new MetaTransaction(session, false);
+            return new MetaTransaction(_core, session, false);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace MamothDB.Server.Core.Engine
         /// <returns></returns>
         public MetaTransaction EnlistImplicit(MetaSession session)
         {
-            var transaction = new MetaTransaction(session, true);
+            var transaction = new MetaTransaction(_core, session, true);
             session.CurrentTransaction = transaction;
             return transaction;
         }
