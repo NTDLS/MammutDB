@@ -38,5 +38,24 @@ namespace MamothDB.Server.Core.Engine
             session.CurrentTransaction = transaction;
             return transaction;
         }
+
+        public void Commit(MetaSession session)
+        {
+            if (session.CurrentTransaction == null)
+            {
+                throw new Exception("No transaction is active.");
+            }
+            session.CurrentTransaction.Commit();
+        }
+
+        public void Rollback(MetaSession session)
+        {
+            if (session.CurrentTransaction != null)
+            {
+                throw new Exception("No transaction is active.");
+            }
+            session.CurrentTransaction.Rollback();
+        }
+
     }
 }

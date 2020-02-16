@@ -28,6 +28,8 @@ namespace Mamoth.TestHarness
             /*
             using (var client = new MamothClient("https://localhost:5001", "root", "p@ssWord!"))
             {
+                client.Transaction.Enlist();
+
                 client.Schema.Create("AR");
                 client.Schema.Create("AR:Sales");
                 client.Schema.Create("AR:Sales:Orders");
@@ -36,6 +38,8 @@ namespace Mamoth.TestHarness
                 client.Schema.Create("AR:Customers");
                 client.Schema.Create("AR:Customers:Prospects");
                 client.Schema.Create("AR:Customers:Contracts");
+
+                client.Transaction.Commit();
 
                 //var serverVersion = client.Server.Settings.GetVersion();
                 //Console.WriteLine($"{serverVersion.Name} v{serverVersion.Version}");

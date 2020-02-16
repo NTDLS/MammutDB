@@ -46,7 +46,7 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        public MetaSession ObtainSession(Guid sessionId)
+        public MetaSession ObtainSession(Guid sessionId, bool createImplitTransaction = true)
         {
             var session = _collection.Catalog.Find(o => o.SessionId == sessionId);
             if (session == null)
@@ -54,7 +54,7 @@ namespace MamothDB.Server.Core.Engine
                 throw new Exception("Invalid session.");
             }
 
-            if (session.CurrentTransaction == null)
+            if (createImplitTransaction && session.CurrentTransaction == null)
             {
                 _core.Transaction.EnlistImplicit(session);
             }

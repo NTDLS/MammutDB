@@ -97,6 +97,7 @@ namespace MamothDB.Server.Core.Models
 
         public void Rollback()
         {
+            //TODO: Got a lot to undo.... :/
             LatchKeys.TurnInAllKeys();
             Session.CurrentTransaction = null;
         }

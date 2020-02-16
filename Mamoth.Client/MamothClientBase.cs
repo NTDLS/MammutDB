@@ -11,6 +11,7 @@ namespace Mamoth.Client
         public LoginToken Token { get; set; }
         public SecurityClient Security { get; private set; }
         public SchemaClient Schema { get; private set; }
+        public TransactionClient Transaction { get; private set; }
 
         protected void Initialize(string baseAddress, TimeSpan commandTimeout, string username = "", string password = "")
         {
@@ -22,6 +23,7 @@ namespace Mamoth.Client
 
             Security = new SecurityClient(this);
             Schema = new SchemaClient(this);
+            Transaction = new TransactionClient(this)
 
             if (string.IsNullOrWhiteSpace(username) == false)
             {
