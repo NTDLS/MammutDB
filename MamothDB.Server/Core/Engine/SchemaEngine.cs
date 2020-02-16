@@ -66,6 +66,8 @@ namespace MamothDB.Server.Core.Engine
         /// <returns></returns>
         public BasicSchemaInfo Create(MetaSession session, string logicalSchemaPath)
         {
+            session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
+
             var schemaInfo = Parse(logicalSchemaPath);
 
             var collection = _core.IO.GetJson<MetaSchemaCollection>(session, schemaInfo.ParentSchemaCatalog);
@@ -99,6 +101,8 @@ namespace MamothDB.Server.Core.Engine
         /// <returns></returns>
         public BasicSchemaInfo Get(MetaSession session, string logicalSchemaPath)
         {
+            session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
+
             var schemaInfo = Parse(logicalSchemaPath);
 
             var collection = _core.IO.GetJson<MetaSchemaCollection>(session, schemaInfo.ParentSchemaCatalog);

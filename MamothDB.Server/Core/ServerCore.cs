@@ -18,6 +18,7 @@ namespace MamothDB.Server.Core
         public SecurityEngine Security { get; private set; }
         public SessionEngine Session { get; private set; }
         public TransactionEngine Transaction { get; private set; }
+        public LatchEngine Latch { get; private set; }
 
         public ServerCore(IStartupOptions startOptions, ILogger<ServerCore> logger)
         {
@@ -94,6 +95,9 @@ namespace MamothDB.Server.Core
 
             Logger.LogInformation("Initializing transaction manager.");
             Transaction = new TransactionEngine(this);
+
+            Logger.LogInformation("Initializing latch manager.");
+            Latch = new LatchEngine(this);
         }
     }
 }

@@ -17,7 +17,18 @@ namespace MamothDB.Server.Core.Models
         public bool IsImplicit { get; private set; }
         public Guid Id { get; private set; }
         public MetaSession Session { get; private set; }
+        public MetaLatchKeyCollection LatchKeys { get; private set; }
         public TransactionUndoItemCollection UndoActions { get; private set; }
+
+        public MetaTransaction(ServerCore core, MetaSession session, bool isImplicit)
+        {
+            _core = core;
+            IsImplicit = isImplicit;
+            Session = session;
+            UndoActions = new TransactionUndoItemCollection();
+            LatchKeys = new MetaLatchKeyCollection();
+            Id = Guid.NewGuid();
+        }
 
         public string TransactionBackupPath
         {
@@ -33,6 +44,27 @@ namespace MamothDB.Server.Core.Models
             {
                 return Path.Combine(_core.Settings.TransactionPath, Id.ToString(), Constants.Filesystem.TransactionUndoCatalog);
             }
+        }
+
+        /// <summary>
+        /// Pass-through to the latch engine to AcquireSchemaLatch.
+        /// </summary>
+        /// <param name="logicalSchemaPath"></param>
+        /// <param name="latchMode"></param>
+        public void AcquireSchemaLatch(string logicalSchemaPath, LatchMode latchMode)
+        {
+            _core.Latch.AcquireSchemaLatch(Session, logicalSchemaPath, latchMode);
+        }
+
+        /// <summary>
+        /// Pass-through to the latch engine to AcquireDocumentLatch.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="logicalDocumentPath"></param>
+        /// <param name="latchMode"></param>
+        public void AcquireDocumentLatch(MetaSession session, string logicalDocumentPath, LatchMode latchMode)
+        {
+            _core.Latch.AcquireDocumentLatch(Session, logicalDocumentPath, latchMode);
         }
 
         public void AddUndoAction(TransactionUndoAction undoAction, string originalPath)
@@ -57,22 +89,15 @@ namespace MamothDB.Server.Core.Models
             });
         }
 
-        public MetaTransaction(ServerCore core, MetaSession session, bool isImplicit)
-        {
-            _core = core;
-            IsImplicit = isImplicit;
-            Session = session;
-            UndoActions = new TransactionUndoItemCollection();
-            Id = Guid.NewGuid();
-        }
-
         public void Commit()
         {
+            LatchKeys.TurnInAllKeys();
             Session.CurrentTransaction = null;
         }
 
         public void Rollback()
         {
+            LatchKeys.TurnInAllKeys();
             Session.CurrentTransaction = null;
         }
 
@@ -90,6 +115,27 @@ namespace MamothDB.Server.Core.Models
                     Directory.CreateDirectory(TransactionBackupPath);
                 }
                 AddUndoAction(Constants.TransactionUndoAction.DeleteDirectory, filePath);
+            }
+
+            CheckpointCatalog();
+        }
+
+        /// <summary>
+        /// Records the deletion of a directory. This method actually moves the folder to the undo location because that is the most efficient way to do it.
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void RecordDeleteDirectory(string filePath)
+        {
+            if (File.Exists(filePath) == false)
+            {
+                if (Directory.Exists(TransactionBackupPath) == false)
+                {
+                    Directory.CreateDirectory(TransactionBackupPath);
+                }
+
+                string backupFile = Path.Combine(TransactionBackupPath, Guid.NewGuid().ToString());
+                Directory.Move(filePath, backupFile);
+                AddUndoAction(Constants.TransactionUndoAction.RestoreDirectory, filePath, backupFile);
             }
 
             CheckpointCatalog();

@@ -26,18 +26,6 @@ namespace MamothDB.Server.Core.Engine
             _memCache = new MemoryCache(memCacheOptions);
         }
 
-        private string FileSystemPathToKey(string path)
-        {
-            string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-
-            foreach (char c in invalid)
-            {
-                path = path.Replace(c.ToString(), "_");
-            }
-
-            return path.ToLower();
-        }
-
         public bool DirectoryExists(MetaSession session, string path)
         {
             //TODO: need to track this as a lock:
@@ -47,7 +35,20 @@ namespace MamothDB.Server.Core.Engine
         public void CreateDirectory(MetaSession session, string path)
         {
             session.CurrentTransaction.RecordCreateDirectory(path);
-            Directory.CreateDirectory(path);
+            if (Directory.Exists(path) == false)
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+
+        public void DeleteDirectory(MetaSession session, string path)
+        {
+            //RecordDeleteDirectory actually moves the directory to the undo location.
+            session.CurrentTransaction.RecordDeleteDirectory(path);
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace MamothDB.Server.Core.Engine
         /// <returns></returns>
         public T GetJson<T>(MetaSession session, string filePath)
         {
-            string key = FileSystemPathToKey(filePath);
+            string key = Utility.FileSystemPathToKey(filePath);
 
             if (_memCache.TryGetValue(key, out T value))
             {
@@ -87,7 +88,7 @@ namespace MamothDB.Server.Core.Engine
         /// <param name="deserializedObject"></param>
         public void PutJson<T>(MetaSession session, string filePath, T deserializedObject)
         {
-            string key = FileSystemPathToKey(filePath);
+            string key = Utility.FileSystemPathToKey(filePath);
 
             string serialized = JsonConvert.SerializeObject(deserializedObject);
 
@@ -137,7 +138,7 @@ namespace MamothDB.Server.Core.Engine
         /// <returns></returns>
         public T GetPBuf<T>(MetaSession session, string filePath)
         {
-            string key = FileSystemPathToKey(filePath);
+            string key = Utility.FileSystemPathToKey(filePath);
 
             if (_memCache.TryGetValue<T>(key, out T value))
             {
@@ -170,7 +171,7 @@ namespace MamothDB.Server.Core.Engine
         /// <param name="deserializedObject"></param>
         public void PutPBuf<T>(MetaSession session, string filePath, T deserializedObject)
         {
-            string key = FileSystemPathToKey(filePath);
+            string key = Utility.FileSystemPathToKey(filePath);
 
             long serializedLength = 0;
 

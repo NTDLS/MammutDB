@@ -19,6 +19,17 @@ namespace MamothDB.Server.Core
             public static string SchemaDirectory = "_schema";
         }
 
+        public enum LatchMode
+        {
+            Exclusive,
+            Shared
+        }
+
+        public enum ObjectType
+        {
+            Schema,
+            Document
+        }
 
         public enum TransactionUndoAction
         {

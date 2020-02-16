@@ -11,5 +11,6 @@ namespace MamothDB.Server.Core.Interfaces
         public SecurityEngine Security { get; }
         public SessionEngine Session { get; }
         public TransactionEngine Transaction { get; }
+        public LatchEngine Latch { get; }
     }
 }

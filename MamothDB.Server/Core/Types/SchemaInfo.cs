@@ -15,10 +15,23 @@ namespace MamothDB.Server.Types
         public string Name { get; set; }
         public string ParentDiskPath { get; set; }
         public string FullDiskPath { get; set; }
-
         public string SchemaCatalog => System.IO.Path.Combine(FullDiskPath, Constants.Filesystem.SchemaCatalog);
         public string ParentSchemaCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.Filesystem.SchemaCatalog);
         public string DocumentCatalog => System.IO.Path.Combine(FullDiskPath, Constants.Filesystem.DocumentCatalog);
         public string ParentDocumentCatalog => System.IO.Path.Combine(ParentDiskPath, Constants.Filesystem.DocumentCatalog);
+
+        private string _objectKey = string.Empty;
+        public string ObjectKey
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_objectKey))
+                {
+                    _objectKey = Utility.FileSystemPathToKey(FullLogicalPath);
+                }
+                return _objectKey;
+            }
+        }
+
     }
 }
