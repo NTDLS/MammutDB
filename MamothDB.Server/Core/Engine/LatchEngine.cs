@@ -28,6 +28,7 @@ namespace MamothDB.Server.Core.Engine
         /// <summary>
         /// Places a latch (or lock) on an object with the specified mode (shared or exclusive).
         /// If you plan on initially using a shared lock then potentiall converting to an exclusive, it is generally safer to acquire the exclusive up front.
+        /// Latches are released then the transaction is terminated by commit or rollback.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="logicalSchemaPath"></param>
@@ -63,6 +64,7 @@ namespace MamothDB.Server.Core.Engine
         /// <summary>
         /// Places a latch (or lock) on an object with the specified mode (shared or exclusive).
         /// If you plan on initially using a shared lock then potentiall converting to an exclusive, it is generally safer to acquire the exclusive up front.
+        /// Latches are released then the transaction is terminated by commit or rollback.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="logicalDocumentPath"></param>
@@ -87,12 +89,6 @@ namespace MamothDB.Server.Core.Engine
 
             //Give the latch key to the current transaction.
             session.CurrentTransaction.LatchKeys.Add(latchKey);
-        }
-
-        public void Release(MetaLatch latch)
-        {
-            // ¯\_(ツ)_/¯
-            //_latches.Remove(latch);
         }
     }
 }
