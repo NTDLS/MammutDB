@@ -1,12 +1,7 @@
 ﻿using MamothDB.Server.Core.Models;
-using MamothDB.Server.Core.Models.Persist;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MamothDB.Server.Core.Engine
 {
@@ -17,6 +12,16 @@ namespace MamothDB.Server.Core.Engine
         public TransactionEngine(ServerCore core)
         {
             _core = core;
+            var transactionPaths = Directory.EnumerateDirectories(_core.Settings.TransactionPath).ToList();
+
+            foreach (var transactionPath in transactionPaths)
+            {
+                var transactionId = Path.GetFileName(transactionPath);
+
+                var transaction = new MetaTransaction(_core, Guid.Parse(transactionId));
+                transaction.Rollback();
+            }
+
         }
 
         public void Enlist(MetaSession session)

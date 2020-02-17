@@ -1,5 +1,4 @@
-﻿using MamothDB.Server.Core.Interfaces;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace MamothDB.Server.Core.Models.Persist
 {

@@ -1,5 +1,4 @@
-﻿using Mamoth.Common;
-using Mamoth.Common.Payload.Model;
+﻿using Mamoth.Common.Payload.Model;
 using Mamoth.Common.Payload.Request;
 using Mamoth.Common.Payload.Response;
 using System;

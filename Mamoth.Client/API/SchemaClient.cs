@@ -1,9 +1,5 @@
-﻿using Mamoth.Common;
-using Mamoth.Common.Payload.Model;
-using Mamoth.Common.Payload.Request;
+﻿using Mamoth.Common.Payload.Request;
 using Mamoth.Common.Payload.Response;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Mamoth.Client.API

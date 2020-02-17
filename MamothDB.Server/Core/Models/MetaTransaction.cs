@@ -1,32 +1,39 @@
 ﻿using MamothDB.Server.Core.Models.Persist;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using static MamothDB.Server.Core.Constants;
 
 namespace MamothDB.Server.Core.Models
 {
     public class MetaTransaction
     {
-        private ServerCore _core { get; set; }
+        private MetaSession _session;
+        private ServerCore _core;
+        private MetaLatchKeyCollection _latchKeys = new MetaLatchKeyCollection();
+
         /// <summary>
         /// Implicit transactions were created by the engine and must be completed at the end of any action.
         /// </summary>
         public bool IsImplicit { get; private set; }
         public Guid Id { get; private set; }
-        public MetaSession Session { get; private set; }
-        public MetaLatchKeyCollection LatchKeys { get; private set; }
-        public TransactionUndoItemCollection UndoActions { get; private set; }
+
+        /// <summary>
+        /// This collection is ONLY used to serialize to the undo log. It is not for iteration.
+        /// </summary>
+        private TransactionUndoItemCollection _undoActions = new TransactionUndoItemCollection();
+
+        public MetaTransaction(ServerCore core, Guid transactionId)
+        {
+            _core = core;
+            IsImplicit = false;
+            Id = transactionId;
+        }
 
         public MetaTransaction(ServerCore core, MetaSession session, bool isImplicit)
         {
             _core = core;
             IsImplicit = isImplicit;
-            Session = session;
-            UndoActions = new TransactionUndoItemCollection();
-            LatchKeys = new MetaLatchKeyCollection();
+            _session = session;
             Id = Guid.NewGuid();
         }
 
@@ -46,6 +53,11 @@ namespace MamothDB.Server.Core.Models
             }
         }
 
+        public void AddLatchKey(MetaLatchKey latchKey)
+        {
+            _latchKeys.Add(latchKey);
+        }
+
         /// <summary>
         /// Pass-through to the latch engine to AcquireSchemaLatch.
         /// </summary>
@@ -53,7 +65,7 @@ namespace MamothDB.Server.Core.Models
         /// <param name="latchMode"></param>
         public void AcquireSchemaLatch(string logicalSchemaPath, LatchMode latchMode)
         {
-            _core.Latch.AcquireSchemaLatch(Session, logicalSchemaPath, latchMode);
+            _core.Latch.AcquireSchemaLatch(_session, logicalSchemaPath, latchMode);
         }
 
         /// <summary>
@@ -64,12 +76,12 @@ namespace MamothDB.Server.Core.Models
         /// <param name="latchMode"></param>
         public void AcquireDocumentLatch(MetaSession session, string logicalDocumentPath, LatchMode latchMode)
         {
-            _core.Latch.AcquireDocumentLatch(Session, logicalDocumentPath, latchMode);
+            _core.Latch.AcquireDocumentLatch(_session, logicalDocumentPath, latchMode);
         }
 
         public void AddUndoAction(TransactionUndoAction undoAction, string originalPath)
         {
-            UndoActions.Add(new TransactionUndoItem
+            _undoActions.Add(new TransactionUndoItem
             {
                 Id = Guid.NewGuid(),
                 OriginalPath = originalPath,
@@ -80,7 +92,7 @@ namespace MamothDB.Server.Core.Models
 
         public void AddUndoAction(TransactionUndoAction undoAction, string originalPath, string backupPath)
         {
-            UndoActions.Add(new TransactionUndoItem
+            _undoActions.Add(new TransactionUndoItem
             {
                 Id = Guid.NewGuid(),
                 OriginalPath = originalPath,
@@ -91,8 +103,12 @@ namespace MamothDB.Server.Core.Models
 
         public void Commit()
         {
-            LatchKeys.TurnInAllKeys();
-            Session.CurrentTransaction = null;
+            _latchKeys.TurnInAllKeys();
+
+            if (_session != null)
+            {
+                _session.CurrentTransaction = null;
+            }
 
             if (Directory.Exists(TransactionBackupPath))
             {
@@ -113,9 +129,12 @@ namespace MamothDB.Server.Core.Models
                 txUndoAction.Execute();
             }
 
-            //TODO: Got a lot to undo.... :/
-            LatchKeys.TurnInAllKeys();
-            Session.CurrentTransaction = null;
+            _latchKeys.TurnInAllKeys();
+
+            if (_session != null)
+            {
+                _session.CurrentTransaction = null;
+            }
 
             if (Directory.Exists(TransactionBackupPath))
             {
@@ -125,7 +144,7 @@ namespace MamothDB.Server.Core.Models
 
         public void CheckpointCatalog()
         {
-            _core.IO.PutJsonDirty(TransactionUndoCatalogFile, UndoActions);
+            _core.IO.PutJsonDirty(TransactionUndoCatalogFile, _undoActions);
         }
 
         public void RecordCreateDirectory(string filePath)

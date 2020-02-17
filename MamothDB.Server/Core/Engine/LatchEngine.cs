@@ -1,13 +1,4 @@
-﻿using Mamoth.Common;
-using Mamoth.Common.Payload.Model;
-using MamothDB.Server.Core.Models;
-using MamothDB.Server.Core.Models.Persist;
-using MamothDB.Server.Types;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using MamothDB.Server.Core.Models;
 using static MamothDB.Server.Core.Constants;
 
 namespace MamothDB.Server.Core.Engine
@@ -57,7 +48,7 @@ namespace MamothDB.Server.Core.Engine
             var latchKey = latch.IssueKey(session.CurrentTransaction, latchMode);
 
             //Give the latch key to the current transaction.
-            session.CurrentTransaction.LatchKeys.Add(latchKey);
+            session.CurrentTransaction.AddLatchKey(latchKey);
         }
 
 
@@ -88,7 +79,7 @@ namespace MamothDB.Server.Core.Engine
             var latchKey = latch.IssueKey(session.CurrentTransaction, latchMode);
 
             //Give the latch key to the current transaction.
-            session.CurrentTransaction.LatchKeys.Add(latchKey);
+            session.CurrentTransaction.AddLatchKey(latchKey);
         }
     }
 }

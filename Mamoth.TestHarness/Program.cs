@@ -1,5 +1,4 @@
 ﻿using Mamoth.Client;
-using System;
 
 namespace Mamoth.TestHarness
 {
@@ -11,6 +10,7 @@ namespace Mamoth.TestHarness
             {
                 using (var connection = pool.GetConnection())
                 {
+                    /*
                     connection.Client.Transaction.Enlist();
 
                     connection.Client.Schema.Create("AR");
@@ -23,6 +23,7 @@ namespace Mamoth.TestHarness
                     connection.Client.Schema.Create("AR:Customers:Contracts");
 
                     connection.Client.Transaction.Rollback();
+                    */
 
                     //var result = connection.Client.Schema.Get("AR:Sales");
                     //Console.WriteLine($"Name: {result.Name}, Id: {result.Id}, Path: {result.Path}");

@@ -1,5 +1,4 @@
 ﻿using Mamoth.Common.Payload.Model;
-using System;
 
 namespace Mamoth.Common.Payload.Response
 {
