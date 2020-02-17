@@ -57,7 +57,7 @@ namespace MamothDB.Server.Controllers
 
             var result = new ActionResponseBase();
 
-            var session = _core.Session.ObtainSession(action.SessionId);
+            var session = _core.Session.ObtainSession(action.SessionId, false);
 
             try
             {

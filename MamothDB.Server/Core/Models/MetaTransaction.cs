@@ -91,17 +91,19 @@ namespace MamothDB.Server.Core.Models
 
         public void Commit()
         {
-            //TODO: Delete transaction files..
             LatchKeys.TurnInAllKeys();
             Session.CurrentTransaction = null;
+
+            if (Directory.Exists(TransactionBackupPath))
+            {
+                Directory.Delete(TransactionBackupPath, true);
+            }
         }
 
         public void Rollback()
         {
             string txUndoCatalogFile = Path.Combine(_core.Settings.TransactionPath, Id.ToString(), Constants.Filesystem.TransactionUndoCatalog);
-
             var undoCollection = _core.IO.GetJsonDirty<TransactionUndoItemCollection>(txUndoCatalogFile);
-
             var undoActions = undoCollection.Catalog;
 
             undoActions.Reverse();
@@ -114,6 +116,11 @@ namespace MamothDB.Server.Core.Models
             //TODO: Got a lot to undo.... :/
             LatchKeys.TurnInAllKeys();
             Session.CurrentTransaction = null;
+
+            if (Directory.Exists(TransactionBackupPath))
+            {
+                Directory.Delete(TransactionBackupPath, true);
+            }
         }
 
         public void CheckpointCatalog()
