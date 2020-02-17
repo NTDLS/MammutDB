@@ -1,4 +1,5 @@
 ﻿using MamothDB.Server.Core.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -12,16 +13,27 @@ namespace MamothDB.Server.Core.Engine
         public TransactionEngine(ServerCore core)
         {
             _core = core;
+        }
+
+        /// <summary>
+        /// Finds transactions that were left over from an unexpected shutdown and rolls them back.
+        /// </summary>
+        public void Recover()
+        {
             var transactionPaths = Directory.EnumerateDirectories(_core.Settings.TransactionPath).ToList();
+
+            if (transactionPaths.Count > 0)
+            {
+                _core.LogInformation($"Rolling back {transactionPaths.Count} transactions.");
+            }
 
             foreach (var transactionPath in transactionPaths)
             {
                 var transactionId = Path.GetFileName(transactionPath);
-
+                _core.LogInformation($"Rolling back transaction: {transactionId}.");
                 var transaction = new MetaTransaction(_core, Guid.Parse(transactionId));
                 transaction.Rollback();
             }
-
         }
 
         public void Enlist(MetaSession session)

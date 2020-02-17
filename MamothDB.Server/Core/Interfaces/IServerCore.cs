@@ -1,5 +1,6 @@
 ﻿using MamothDB.Server.Core.Engine;
 using MamothDB.Server.Core.Models.Persist;
+using Microsoft.Extensions.Logging;
 
 namespace MamothDB.Server.Core.Interfaces
 {

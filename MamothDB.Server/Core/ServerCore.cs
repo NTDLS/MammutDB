@@ -9,7 +9,7 @@ namespace MamothDB.Server.Core
 {
     public class ServerCore : IServerCore
     {
-        public readonly ILogger<ServerCore> Logger;
+        public ILogger<ServerCore> Logger;
         public ServerSettings Settings { get; private set; }
         public IOEngine IO { get; private set; }
         public SchemaEngine Schema { get; private set; }
@@ -24,19 +24,24 @@ namespace MamothDB.Server.Core
             Initialize(startOptions);
         }
 
+        public void LogInformation(string text) => Logger.LogInformation(text);
+        public void LogDebug(string text) => Logger.LogDebug(text);
+        public void LogError(string text) => Logger.LogError(text);
+        public void LogWarning(string text) => Logger.LogWarning(text);
+
         private void Initialize(IStartupOptions startOptions)
         {
-            Logger.LogInformation("Initializing core..");
+            LogInformation("Initializing core..");
 
             if (File.Exists(startOptions.ConfigFile))
             {
-                Logger.LogInformation("Loading configuration.");
+                LogInformation("Loading configuration.");
                 //The IOManager is not initialized yet, so read the data directly.
                 Settings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText(startOptions.ConfigFile));
             }
             else
             {
-                Logger.LogInformation("Initializing new configuration.");
+                LogInformation("Initializing new configuration.");
                 Settings = new ServerSettings(startOptions.RootPath)
                 {
                     //TODO: Add additional startup options.
@@ -79,23 +84,27 @@ namespace MamothDB.Server.Core
                 File.WriteAllText(Settings.LoginFile, JsonConvert.SerializeObject(loginCatalog));
             }
 
-            Logger.LogInformation("Initializing security manager.");
+            LogInformation("Initializing security manager.");
             Security = new SecurityEngine(this);
 
-            Logger.LogInformation("Initializing IO manager.");
+            LogInformation("Initializing IO manager.");
             IO = new IOEngine(this);
 
-            Logger.LogInformation("Initializing schema manager.");
+            LogInformation("Initializing schema manager.");
             Schema = new SchemaEngine(this);
 
-            Logger.LogInformation("Initializing session manager.");
+            LogInformation("Initializing session manager.");
             Session = new SessionEngine(this);
 
-            Logger.LogInformation("Initializing transaction manager.");
+            LogInformation("Initializing latch manager.");
+            Latch = new LatchEngine(this);
+
+            LogInformation("Initializing transaction manager.");
             Transaction = new TransactionEngine(this);
 
-            Logger.LogInformation("Initializing latch manager.");
-            Latch = new LatchEngine(this);
+            LogInformation("Starting transaction recovery.");
+            Transaction.Recover();
+            LogInformation("Transaction recovery complete.");
         }
     }
 }
