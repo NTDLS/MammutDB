@@ -23,7 +23,7 @@ namespace Mamoth.Client
 
             Security = new SecurityClient(this);
             Schema = new SchemaClient(this);
-            Transaction = new TransactionClient(this)
+            Transaction = new TransactionClient(this);
 
             if (string.IsNullOrWhiteSpace(username) == false)
             {

@@ -17,14 +17,12 @@ namespace MamothDB.Server.Core.Models
 
         public void CommitImplicitTransaction()
         {
-            if (CurrentTransaction == null)
+            if (CurrentTransaction != null)
             {
-                throw new Exception("No transaction is active.");
-            }
-
-            if (CurrentTransaction.IsImplicit)
-            {
-                CurrentTransaction.Commit();
+                if (CurrentTransaction.IsImplicit)
+                {
+                    CurrentTransaction.Commit();
+                }
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using MamothDB.Server.Core.Models;
+using MamothDB.Server.Core.Models.Persist;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System;
@@ -18,13 +19,13 @@ namespace MamothDB.Server.Core.Engine
             _core = core;
         }
 
-        public MetaTransaction Enlist(MetaSession session)
+        public void Enlist(MetaSession session)
         {
             if (session.CurrentTransaction != null)
             {
                 throw new Exception("Transaction is already open.");
             }
-            return new MetaTransaction(_core, session, false);
+            session.CurrentTransaction = new MetaTransaction(_core, session, false);
         }
 
         /// <summary>
@@ -32,11 +33,12 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        public MetaTransaction EnlistImplicit(MetaSession session)
+        public void EnlistImplicit(MetaSession session)
         {
-            var transaction = new MetaTransaction(_core, session, true);
-            session.CurrentTransaction = transaction;
-            return transaction;
+            if (session.CurrentTransaction == null)
+            {
+                session.CurrentTransaction = new MetaTransaction(_core, session, true);
+            }
         }
 
         public void Commit(MetaSession session)
@@ -50,12 +52,11 @@ namespace MamothDB.Server.Core.Engine
 
         public void Rollback(MetaSession session)
         {
-            if (session.CurrentTransaction != null)
+            if (session.CurrentTransaction == null)
             {
                 throw new Exception("No transaction is active.");
             }
             session.CurrentTransaction.Rollback();
         }
-
     }
 }

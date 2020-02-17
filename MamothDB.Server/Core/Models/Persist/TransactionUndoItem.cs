@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static MamothDB.Server.Core.Constants;
@@ -24,5 +25,46 @@ namespace MamothDB.Server.Core.Models.Persist
         /// The path of any backup which was taken before a file/directory was modified.
         /// </summary>
         public string BackupPath { get; set; }
+
+        public void Execute()
+        {
+            if (UndoAction == TransactionUndoAction.DeleteDirectory)
+            {
+                if (Directory.Exists(OriginalPath))
+                {
+                    Directory.Delete(OriginalPath, true);
+                }
+            }
+            else if (UndoAction == TransactionUndoAction.RestoreDirectory)
+            {
+                if (Directory.Exists(OriginalPath))
+                {
+                    Directory.Delete(OriginalPath, true);
+                }
+                Directory.Move(BackupPath, OriginalPath);
+            }
+            else if (UndoAction == TransactionUndoAction.DeleteFile)
+            {
+                if (File.Exists(OriginalPath))
+                {
+                    File.Delete(OriginalPath);
+                }
+            }
+            else if (UndoAction == TransactionUndoAction.RestoreFile)
+            {
+                if (File.Exists(OriginalPath))
+                {
+                    File.Delete(OriginalPath);
+                }
+
+                File.Move(BackupPath, OriginalPath);
+            }
+            else
+            {
+                throw new Exception("Transaction undo type not implemented.");
+            }
+        }
+
+
     }
 }

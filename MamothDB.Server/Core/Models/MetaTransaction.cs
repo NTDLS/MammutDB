@@ -91,12 +91,26 @@ namespace MamothDB.Server.Core.Models
 
         public void Commit()
         {
+            //TODO: Delete transaction files..
             LatchKeys.TurnInAllKeys();
             Session.CurrentTransaction = null;
         }
 
         public void Rollback()
         {
+            string txUndoCatalogFile = Path.Combine(_core.Settings.TransactionPath, Id.ToString(), Constants.Filesystem.TransactionUndoCatalog);
+
+            var undoCollection = _core.IO.GetJsonDirty<TransactionUndoItemCollection>(txUndoCatalogFile);
+
+            var undoActions = undoCollection.Catalog;
+
+            undoActions.Reverse();
+
+            foreach (var txUndoAction in undoActions)
+            {
+                txUndoAction.Execute();
+            }
+
             //TODO: Got a lot to undo.... :/
             LatchKeys.TurnInAllKeys();
             Session.CurrentTransaction = null;
@@ -153,7 +167,7 @@ namespace MamothDB.Server.Core.Models
 
                 string backupFile = Path.Combine(TransactionBackupPath, Guid.NewGuid().ToString());
                 File.Copy(filePath, backupFile);
-                AddUndoAction(Constants.TransactionUndoAction.DeleteFile, filePath, backupFile);
+                AddUndoAction(Constants.TransactionUndoAction.RestoreFile, filePath, backupFile);
             }
             else
             {

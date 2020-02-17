@@ -26,7 +26,7 @@ namespace MamothDB.Server.Core.Engine
         }
 
         /// <summary>
-        /// //This shoule only be called when creating the initial structure at first ever server startup.
+        /// //This should only be called when creating the initial structure at first ever server startup.
         /// </summary>
         /// <param name="schemaInfo"></param>
         private void InitializeNewSchemaDirectoryDirty(SchemaInfo schemaInfo)
@@ -86,7 +86,7 @@ namespace MamothDB.Server.Core.Engine
                 Name = schemaInfo.Name
             };
 
-            InitializeNewSchemaDirectoryDirty(schemaInfo);
+            InitializeNewSchemaDirectory(session, schemaInfo);
 
             collection.Add(metaSchema);
             _core.IO.PutJson(session, schemaInfo.ParentSchemaCatalog, collection);
@@ -104,6 +104,11 @@ namespace MamothDB.Server.Core.Engine
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
             var schemaInfo = Parse(logicalSchemaPath);
+
+            if (File.Exists(schemaInfo.SchemaCatalog) == false)
+            {
+                throw new Exception("The specified schema does not exist.");
+            }
 
             var collection = _core.IO.GetJson<MetaSchemaCollection>(session, schemaInfo.ParentSchemaCatalog);
 

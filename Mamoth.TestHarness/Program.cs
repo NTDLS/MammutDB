@@ -11,6 +11,8 @@ namespace Mamoth.TestHarness
             {
                 using (var connection = pool.GetConnection())
                 {
+                    connection.Client.Transaction.Enlist();
+
                     connection.Client.Schema.Create("AR");
                     connection.Client.Schema.Create("AR:Sales");
                     connection.Client.Schema.Create("AR:Sales:Orders");
@@ -20,8 +22,10 @@ namespace Mamoth.TestHarness
                     connection.Client.Schema.Create("AR:Customers:Prospects");
                     connection.Client.Schema.Create("AR:Customers:Contracts");
 
-                    var result = connection.Client.Schema.Get("AR:Sales");
-                    Console.WriteLine($"Name: {result.Name}, Id: {result.Id}, Path: {result.Path}");
+                    connection.Client.Transaction.Rollback();
+
+                    //var result = connection.Client.Schema.Get("AR:Sales");
+                    //Console.WriteLine($"Name: {result.Name}, Id: {result.Id}, Path: {result.Path}");
                 }
             }
 
