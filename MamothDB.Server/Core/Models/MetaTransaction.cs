@@ -144,6 +144,10 @@ namespace MamothDB.Server.Core.Models
 
         public void CheckpointCatalog()
         {
+            if (Directory.Exists(TransactionBackupPath) == false)
+            {
+                Directory.CreateDirectory(TransactionBackupPath);
+            }
             _core.IO.PutJsonDirty(TransactionUndoCatalogFile, _undoActions);
         }
 

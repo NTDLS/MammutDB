@@ -8,6 +8,7 @@
             public static string DocumentCatalog = "_documents.json";
             public static string LoginCatalog = "_logins.json";
             public static string TransactionUndoCatalog = "_catalog.json";
+            public static string DocumentFileExtention = ".json";
 
             public static string ServerSettings = "_server.json";
             public static string TransactionDirectory = "_transaction";

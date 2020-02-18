@@ -17,6 +17,7 @@ namespace MamothDB.Server.Core
         public SessionEngine Session { get; private set; }
         public TransactionEngine Transaction { get; private set; }
         public LatchEngine Latch { get; private set; }
+        public DocumentEngine Document { get; private set; }
 
         public ServerCore(IStartupOptions startOptions, ILogger<ServerCore> logger)
         {
@@ -84,23 +85,27 @@ namespace MamothDB.Server.Core
                 File.WriteAllText(Settings.LoginFile, JsonConvert.SerializeObject(loginCatalog));
             }
 
-            LogInformation("Initializing security manager.");
+            LogInformation("Initializing security engine.");
             Security = new SecurityEngine(this);
 
-            LogInformation("Initializing IO manager.");
+            LogInformation("Initializing IO engine.");
             IO = new IOEngine(this);
 
-            LogInformation("Initializing schema manager.");
+            LogInformation("Initializing schema engine.");
             Schema = new SchemaEngine(this);
 
-            LogInformation("Initializing session manager.");
+            LogInformation("Initializing session engine.");
             Session = new SessionEngine(this);
 
-            LogInformation("Initializing latch manager.");
+            LogInformation("Initializing latch engine.");
             Latch = new LatchEngine(this);
 
-            LogInformation("Initializing transaction manager.");
+            LogInformation("Initializing transaction engine.");
             Transaction = new TransactionEngine(this);
+
+            LogInformation("Initializing document engine.");
+            Document = new DocumentEngine(this);
+            
 
             LogInformation("Starting transaction recovery.");
             Transaction.Recover();

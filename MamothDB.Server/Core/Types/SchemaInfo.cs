@@ -1,4 +1,8 @@
-﻿using MamothDB.Server.Core;
+﻿using Mamoth.Common.Payload.Model;
+using MamothDB.Server.Core;
+using MamothDB.Server.Core.Models.Persist;
+using System;
+using System.IO;
 
 namespace MamothDB.Server.Types
 {
@@ -27,5 +31,16 @@ namespace MamothDB.Server.Types
             }
         }
 
+        public string GetDocumentFileName(Guid documentId) => Path.Combine(FullDiskPath, documentId.ToString()) + Constants.Filesystem.DocumentFileExtention;
+        public string GetDocumentFileName(Document document) => GetDocumentFileName(document.Id);
+        public string GetDocumentFileName(MetaDocument document) => GetDocumentFileName(document.Id);
+
+        public bool Exists
+        {
+            get
+            {
+                return File.Exists(SchemaCatalog);
+            }
+        }
     }
 }

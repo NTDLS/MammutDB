@@ -99,8 +99,7 @@ namespace MamothDB.Server.Core.Engine
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
             var schemaInfo = Parse(logicalSchemaPath);
-
-            if (File.Exists(schemaInfo.SchemaCatalog) == false)
+            if (schemaInfo.Exists == false)
             {
                 throw new Exception("The specified schema does not exist.");
             }

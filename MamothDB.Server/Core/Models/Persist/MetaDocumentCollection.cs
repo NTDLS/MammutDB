@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MamothDB.Server.Core.Models.Persist
 {
@@ -7,6 +8,16 @@ namespace MamothDB.Server.Core.Models.Persist
     /// </summary>
     public class MetaDocumentCollection
     {
-        List<MetaDocument> Catalog = new List<MetaDocument>();
+        public List<Guid> Catalog = new List<Guid>();
+
+        public void Add(MetaDocument document)
+        {
+            Catalog.Add(document.Id);
+        }
+
+        public void Add(Mamoth.Common.Payload.Model.Document document)
+        {
+            Catalog.Add(document.Id);
+        }
     }
 }
