@@ -1,5 +1,6 @@
 ﻿using MamothDB.Server.Core.Models.Persist;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using static MamothDB.Server.Core.Constants;
 
@@ -10,6 +11,7 @@ namespace MamothDB.Server.Core.Models
         private MetaSession _session;
         private ServerCore _core;
         private MetaLatchKeyCollection _latchKeys = new MetaLatchKeyCollection();
+        private HashSet<string> transactedItems = new HashSet<string>();
 
         /// <summary>
         /// Implicit transactions were created by the engine and must be completed at the end of any action.
@@ -87,7 +89,6 @@ namespace MamothDB.Server.Core.Models
                 OriginalPath = originalPath,
                 UndoAction = undoAction
             });
-
         }
 
         public void AddUndoAction(TransactionUndoAction undoAction, string originalPath, string backupPath)
@@ -153,16 +154,21 @@ namespace MamothDB.Server.Core.Models
 
         public void RecordCreateDirectory(string filePath)
         {
-            if (File.Exists(filePath) == false)
+            var key = filePath.ToLower();
+            if (transactedItems.Contains(key) == false)
             {
-                if (Directory.Exists(TransactionBackupPath) == false)
+                transactedItems.Add(key);
+                if (File.Exists(filePath) == false)
                 {
-                    Directory.CreateDirectory(TransactionBackupPath);
+                    if (Directory.Exists(TransactionBackupPath) == false)
+                    {
+                        Directory.CreateDirectory(TransactionBackupPath);
+                    }
+                    AddUndoAction(Constants.TransactionUndoAction.DeleteDirectory, filePath);
                 }
-                AddUndoAction(Constants.TransactionUndoAction.DeleteDirectory, filePath);
-            }
 
-            CheckpointCatalog();
+                CheckpointCatalog();
+            }
         }
 
         /// <summary>
@@ -171,40 +177,52 @@ namespace MamothDB.Server.Core.Models
         /// <param name="filePath"></param>
         public void RecordDeleteDirectory(string filePath)
         {
-            if (File.Exists(filePath) == false)
+            var key = filePath.ToLower();
+            if (transactedItems.Contains(key) == false)
             {
-                if (Directory.Exists(TransactionBackupPath) == false)
+                transactedItems.Add(key);
+
+                if (File.Exists(filePath) == false)
                 {
-                    Directory.CreateDirectory(TransactionBackupPath);
+                    if (Directory.Exists(TransactionBackupPath) == false)
+                    {
+                        Directory.CreateDirectory(TransactionBackupPath);
+                    }
+
+                    string backupFile = Path.Combine(TransactionBackupPath, Guid.NewGuid().ToString());
+                    Directory.Move(filePath, backupFile);
+                    AddUndoAction(Constants.TransactionUndoAction.RestoreDirectory, filePath, backupFile);
                 }
 
-                string backupFile = Path.Combine(TransactionBackupPath, Guid.NewGuid().ToString());
-                Directory.Move(filePath, backupFile);
-                AddUndoAction(Constants.TransactionUndoAction.RestoreDirectory, filePath, backupFile);
+                CheckpointCatalog();
             }
-
-            CheckpointCatalog();
         }
 
         public void RecordFileWrite(string filePath)
         {
-            if (File.Exists(filePath))
+            var key = filePath.ToLower();
+            if (transactedItems.Contains(key) == false)
             {
-                if (Directory.Exists(TransactionBackupPath) == false)
+                transactedItems.Add(key);
+
+                if (File.Exists(filePath))
                 {
-                    Directory.CreateDirectory(TransactionBackupPath);
+                    if (Directory.Exists(TransactionBackupPath) == false)
+                    {
+                        Directory.CreateDirectory(TransactionBackupPath);
+                    }
+
+                    string backupFile = Path.Combine(TransactionBackupPath, Guid.NewGuid().ToString() + Constants.Filesystem.TxUnDoExtension);
+                    File.Copy(filePath, backupFile);
+                    AddUndoAction(Constants.TransactionUndoAction.RestoreFile, filePath, backupFile);
+                }
+                else
+                {
+                    AddUndoAction(Constants.TransactionUndoAction.DeleteFile, filePath);
                 }
 
-                string backupFile = Path.Combine(TransactionBackupPath, Guid.NewGuid().ToString());
-                File.Copy(filePath, backupFile);
-                AddUndoAction(Constants.TransactionUndoAction.RestoreFile, filePath, backupFile);
+                CheckpointCatalog();
             }
-            else
-            {
-                AddUndoAction(Constants.TransactionUndoAction.DeleteFile, filePath);
-            }
-
-            CheckpointCatalog();
         }
     }
 }
