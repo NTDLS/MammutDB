@@ -8,6 +8,7 @@ using Mamoth.Common;
 using Mamoth.Common.Payload.Request;
 using Mamoth.Common.Payload.Response;
 using MamothDB.Server.Core.Interfaces;
+using MamothDB.Server.Core.Models.Persist;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -28,18 +29,17 @@ namespace MamothDB.Server.Controllers
         }
 
         [HttpPost]
-        public ActionResponseDocument Create([FromBody]ActionRequestDocument action)
+        public ActionResponseId Create([FromBody]ActionRequestDocument action)
         {
             _logger.LogDebug($"API:{MamothUtility.GetCurrentMethod()}");
 
-            var result = new ActionResponseDocument();
+            var result = new ActionResponseId();
             var session = _core.Session.ObtainSession(action.SessionId);
 
             try
             {
                 var documentInfo = _core.Document.Create(session, action.Path, action.Document);
                 result.Id = documentInfo.Id;
-                result.Path = documentInfo.LogicalPath;
                 result.Success = true;
             }
             catch (Exception ex)
@@ -66,9 +66,9 @@ namespace MamothDB.Server.Controllers
 
             try
             {
-                var documentInfo = _core.Document.GetById(session, action.Path, action.Id);
-                result.Id = documentInfo.Id;
-                result.Path = documentInfo.LogicalPath;
+                var metaDocument = _core.Document.GetById(session, action.Path, action.Id);
+                result.Document = MetaDocument.ToPayload(metaDocument);
+                result.Id = metaDocument.Id;
                 result.Success = true;
             }
             catch (Exception ex)

@@ -41,6 +41,11 @@ namespace MamothDB.Server.Types
             }
         }
 
+        public string GetDocumentLogicalPath(Guid documentId) => $"{FullLogicalPath}:{documentId.ToString()}";
+        public string GetDocumentLogicalPath(Document document) => GetDocumentLogicalPath(document.Id);
+        public string GetDocumentLogicalPath(MetaDocument document) => GetDocumentLogicalPath(document.Id);
+
+
         public string GetDocumentFileName(Guid documentId) => Path.Combine(FullDiskPath, documentId.ToString()) + Constants.Filesystem.DocumentFileExtention;
         public string GetDocumentFileName(Document document) => GetDocumentFileName(document.Id);
         public string GetDocumentFileName(MetaDocument document) => GetDocumentFileName(document.Id);

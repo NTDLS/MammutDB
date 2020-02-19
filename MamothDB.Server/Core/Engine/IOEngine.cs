@@ -37,7 +37,7 @@ namespace MamothDB.Server.Core.Engine
 
         public bool FileExists(MetaSession session, string path)
         {
-            if(session.CurrentTransaction.DeferredIO.ContainsFilePath(path))
+            if (session.CurrentTransaction.DeferredIO.ContainsFilePath(path))
             {
                 //The file might not yet exist, but its in the cache.
                 return true;
@@ -76,6 +76,7 @@ namespace MamothDB.Server.Core.Engine
         {
             string key = Utility.FileSystemPathToKey(filePath);
 
+
             if (_memCache.TryGetValue(key, out T value))
             {
                 return value;
@@ -112,11 +113,9 @@ namespace MamothDB.Server.Core.Engine
                 File.WriteAllText(filePath, serialized);
             }
 
-            int objectSize = Marshal.ReadInt32(deserializedObject.GetType().TypeHandle.Value, 4);
-
             var options = new MemoryCacheEntryOptions()
             {
-                Size = objectSize
+                Size = Marshal.ReadInt32(deserializedObject.GetType().TypeHandle.Value, 4),
                 //TODO: Consider expirations.
             };
 
@@ -203,7 +202,13 @@ namespace MamothDB.Server.Core.Engine
                 }
             }
 
-            _memCache.Set<T>(cacheKey, deserializedObject);
+            var options = new MemoryCacheEntryOptions()
+            {
+                Size = Marshal.ReadInt32(deserializedObject.GetType().TypeHandle.Value, 4),
+                //TODO: Consider expirations.
+            };
+
+            _memCache.Set<T>(cacheKey, deserializedObject, options);
 
             session.CurrentTransaction.RecordFileWrite(filePath);
         }

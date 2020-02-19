@@ -24,7 +24,7 @@ namespace Mamoth.Client.API
         /// <param name="logicalSchemaPath"></param>
         /// <param name="document"></param>
         /// <returns></returns>
-        public ActionResponseDocument Create(string logicalSchemaPath, Document document)
+        public ActionResponseId Create(string logicalSchemaPath, Document document)
         {
             var action = new ActionRequestDocument(_client.Token.SessionId)
             {
@@ -32,10 +32,10 @@ namespace Mamoth.Client.API
                 Document = document
             };
 
-            return Submit<ActionRequestDocument, ActionResponseDocument>($"{_apiBase}/Create", action);
+            return Submit<ActionRequestDocument, ActionResponseId>($"{_apiBase}/Create", action);
         }
 
-        public ActionResponseDocument Create(string logicalSchemaPath, object documentContent)
+        public ActionResponseId Create(string logicalSchemaPath, object documentContent)
         {
             var document = new Document()
             {
@@ -48,7 +48,7 @@ namespace Mamoth.Client.API
                 Document = document
             };
 
-            return Submit<ActionRequestDocument, ActionResponseDocument>($"{_apiBase}/Create", action);
+            return Submit<ActionRequestDocument, ActionResponseId>($"{_apiBase}/Create", action);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Mamoth.Client.API
         /// <param name="logicalSchemaPath"></param>
         /// <param name="documentId"></param>
         /// <returns></returns>
-        public ActionResponseDocument Get(string logicalSchemaPath, Guid documentId)
+        public ActionResponseDocument GetById(string logicalSchemaPath, Guid documentId)
         {
             var action = new ActionRequestDocument(_client.Token.SessionId)
             {
@@ -98,7 +98,7 @@ namespace Mamoth.Client.API
                 Id = documentId
             };
 
-            return Submit<ActionRequestDocument, ActionResponseDocument>($"{_apiBase}/Get", action);
+            return Submit<ActionRequestDocument, ActionResponseDocument>($"{_apiBase}/GetById", action);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Mamoth.Client.API
         /// <param name="logicalSchemaPath"></param>
         /// <param name="documentId"></param>
         /// <returns></returns>
-        public async Task<ActionResponseDocument> GetAsync(string logicalSchemaPath, Guid documentId)
+        public async Task<ActionResponseDocument> GetByIdAsync(string logicalSchemaPath, Guid documentId)
         {
             var action = new ActionRequestDocument(_client.Token.SessionId)
             {
@@ -115,7 +115,7 @@ namespace Mamoth.Client.API
                 Id = documentId
             };
 
-            return (await SubmitAsync<ActionRequestDocument, ActionResponseDocument>($"{_apiBase}/Get", action));
+            return (await SubmitAsync<ActionRequestDocument, ActionResponseDocument>($"{_apiBase}/GetById", action));
         }
     }
 }

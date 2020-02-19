@@ -3,7 +3,6 @@ using MamothDB.Server.Core.Models;
 using MamothDB.Server.Core.Models.Persist;
 using MamothDB.Server.Types;
 using System;
-using System.IO;
 
 namespace MamothDB.Server.Core.Engine
 {
@@ -41,35 +40,13 @@ namespace MamothDB.Server.Core.Engine
 
             var documentFilePath = schemaInfo.GetDocumentFileName(document);
 
-            _core.IO.PutJson(session, documentFilePath, document);
+            _core.IO.PutJson(session, documentFilePath, MetaDocument.FromPayload(document));
 
             collection.Add(MetaDocument.FromPayload(document));
 
             _core.IO.PutJson(session, schemaInfo.DocumentCatalog, collection);
 
-            /*
-            var existingSchema = collection.GetByName(schemaInfo.Name);
-            if (existingSchema != null)
-            {
-                //No need to hassle the user with an exception, just return the schema ID if it already exists.
-                return new BasicDocumentInfo { Id = existingSchema.Id, LogicalPath = schemaInfo.FullLogicalPath };
-                //throw new Exception("The schema already exists.");
-            }
-
-            var metaSchema = new MetaSchema()
-            {
-                Id = Guid.NewGuid(),
-                Name = schemaInfo.Name
-            };
-
-
-            collection.Add(metaSchema);
-            _core.IO.PutJson(session, schemaInfo.ParentSchemaCatalog, collection);
-
-            return new BasicDocumentInfo { Id = metaSchema.Id, LogicalPath = schemaInfo.FullLogicalPath };
-            */
-
-            return new BasicDocumentInfo();
+            return new BasicDocumentInfo() { Id = document.Id };
         }
 
         /// <summary>
@@ -77,7 +54,7 @@ namespace MamothDB.Server.Core.Engine
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
-        public BasicDocumentInfo GetById(MetaSession session, string logicalSchemaPath, Guid documentId)
+        public MetaDocument GetById(MetaSession session, string logicalSchemaPath, Guid documentId)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Shared);
 
@@ -87,18 +64,19 @@ namespace MamothDB.Server.Core.Engine
                 throw new Exception("The specified schema does not exist.");
             }
 
-            /*
+            var documentlogicalPath = schemaInfo.GetDocumentLogicalPath(documentId);
+            session.CurrentTransaction.AcquireDocumentLatch(session, documentlogicalPath, Constants.LatchMode.Shared);
 
-            var collection = _core.IO.GetJson<MetaSchemaCollection>(session, schemaInfo.ParentSchemaCatalog);
-
-            var existingSchema = collection.GetByName(schemaInfo.Name);
-            if (existingSchema != null)
+            var collection = _core.IO.GetJson<MetaDocumentCollection>(session, schemaInfo.DocumentCatalog);
+            if(collection.Catalog.Contains(documentId) == false)
             {
-                return new BasicDocumentInfo { Id = existingSchema.Id, LogicalPath = schemaInfo.FullLogicalPath };
+                throw new Exception("The specified document does not exist.");
             }
-            */
 
-            return new BasicDocumentInfo();
+            var documentFilePath = schemaInfo.GetDocumentFileName(documentId);
+            var document = _core.IO.GetJson<MetaDocument>(session, documentFilePath);
+
+            return document;
         }
     }
 }

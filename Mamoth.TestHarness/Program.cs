@@ -74,7 +74,7 @@ namespace Mamoth.TestHarness
 
                                 DumpSubWords(client, schema, wordId);
 
-                                System.Threading.Thread.Sleep(250);
+                                //System.Threading.Thread.Sleep(250);
                             }
                         }
                     }
@@ -124,11 +124,13 @@ namespace Mamoth.TestHarness
                                 NumberOfEmployees = rand.Next(10, 1000)
                             };
 
-                            client.Document.Create(schema, cust);
+                            var documentInfo = client.Document.Create(schema, cust);
+
+                            var document = client.Document.GetById(schema, documentInfo.Id);
 
                             //DumpSubWords(subSchema, wordId);
 
-                            System.Threading.Thread.Sleep(250);
+                            //System.Threading.Thread.Sleep(250);
                         }
 
                         client.Transaction.Commit();
