@@ -25,7 +25,7 @@ namespace MamothDB.Server.Core.Engine
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Shared);
 
-            var schemaInfo = _core.Schema.Parse(logicalSchemaPath);
+            var schemaInfo = _core.Schema.Parse(session, logicalSchemaPath);
             if (schemaInfo.Exists == false)
             {
                 throw new Exception("The specified schema does not exist.");
@@ -81,7 +81,7 @@ namespace MamothDB.Server.Core.Engine
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Shared);
 
-            var schemaInfo = _core.Schema.Parse(logicalSchemaPath);
+            var schemaInfo = _core.Schema.Parse(session, logicalSchemaPath);
             if (schemaInfo.Exists == false)
             {
                 throw new Exception("The specified schema does not exist.");

@@ -1,5 +1,6 @@
 ﻿using Mamoth.Common.Payload.Model;
 using MamothDB.Server.Core;
+using MamothDB.Server.Core.Models;
 using MamothDB.Server.Core.Models.Persist;
 using System;
 using System.IO;
@@ -8,6 +9,15 @@ namespace MamothDB.Server.Types
 {
     public class SchemaInfo
     {
+        private ServerCore _core;
+        private MetaSession _session;
+
+        public SchemaInfo(ServerCore core, MetaSession session)
+        {
+            _core = core;
+            _session = session;
+        }
+
         public string FullLogicalPath { get; set; }
         public string LogicalParent { get; set; }
         public string Name { get; set; }
@@ -39,7 +49,7 @@ namespace MamothDB.Server.Types
         {
             get
             {
-                return File.Exists(SchemaCatalog);
+                return _core.IO.FileExists(_session, SchemaCatalog);
             }
         }
     }

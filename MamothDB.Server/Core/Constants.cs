@@ -28,6 +28,13 @@
             Document
         }
 
+        public enum IOFormat
+        {
+            Raw,
+            JSON,
+            PBuf
+        }
+
         public enum TransactionUndoAction
         {
             RestoreFile,      //Restore the specified file.

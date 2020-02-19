@@ -16,27 +16,20 @@ namespace MamothDB.Server.Core.Engine
 
             if (Directory.Exists(_core.Settings.SchemaPath) == false)
             {
-                InitializeNewSchemaDirectoryDirty(Parse(":"));
-            }
-        }
-
-        /// <summary>
-        /// //This should only be called when creating the initial structure at first ever server startup.
-        /// </summary>
-        /// <param name="schemaInfo"></param>
-        private void InitializeNewSchemaDirectoryDirty(SchemaInfo schemaInfo)
-        {
-            if (Directory.Exists(schemaInfo.ParentDiskPath) == false)
-            {
-                Directory.CreateDirectory(schemaInfo.ParentDiskPath);
-            }
-            if (Directory.Exists(schemaInfo.FullDiskPath) == false)
-            {
-                Directory.CreateDirectory(schemaInfo.FullDiskPath);
+                Directory.CreateDirectory(_core.Settings.SchemaPath);
             }
 
-            _core.IO.PutJsonDirty(schemaInfo.SchemaCatalog, new MetaSchemaCollection());
-            _core.IO.PutJsonDirty(schemaInfo.DocumentCatalog, new MetaDocumentCollection());
+            string schemaCatalog = Path.Combine(_core.Settings.SchemaPath, Constants.Filesystem.SchemaCatalog);
+            if (File.Exists(schemaCatalog) == false)
+            {
+                _core.IO.PutJsonDirty(schemaCatalog, new MetaSchemaCollection());
+            }
+
+            string documentCatalog = Path.Combine(_core.Settings.SchemaPath, Constants.Filesystem.DocumentCatalog);
+            if (File.Exists(documentCatalog) == false)
+            {
+                _core.IO.PutJsonDirty(documentCatalog, new MetaDocumentCollection());
+            }
         }
 
         private void InitializeNewSchemaDirectory(MetaSession session, SchemaInfo schemaInfo)
@@ -63,9 +56,9 @@ namespace MamothDB.Server.Core.Engine
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
-            var schemaInfo = Parse(logicalSchemaPath);
+            var schemaInfo = Parse(session, logicalSchemaPath);
 
-            var parentSchemaInfo = Parse(schemaInfo.LogicalParent);
+            var parentSchemaInfo = Parse(session, schemaInfo.LogicalParent);
             if (parentSchemaInfo.Exists == false)
             {
                 throw new Exception("The specified parent schema does not exist.");
@@ -104,7 +97,7 @@ namespace MamothDB.Server.Core.Engine
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
-            var schemaInfo = Parse(logicalSchemaPath);
+            var schemaInfo = Parse(session, logicalSchemaPath);
             if (schemaInfo.Exists == false)
             {
                 throw new Exception("The specified schema does not exist.");
@@ -125,11 +118,11 @@ namespace MamothDB.Server.Core.Engine
         /// Splits a full schema into its path and name parts.
         /// </summary>
         /// <returns></returns>
-        public SchemaInfo Parse(string logicalSchemaPath)
+        public SchemaInfo Parse(MetaSession session, string logicalSchemaPath)
         {
             logicalSchemaPath = logicalSchemaPath.Trim(new char[] { ':' }).Replace("::", ":");
 
-            var parts = new SchemaInfo();
+            var parts = new SchemaInfo(_core, session);
 
             int lastDelimiterIndex = logicalSchemaPath.LastIndexOf(":");
 
@@ -138,15 +131,15 @@ namespace MamothDB.Server.Core.Engine
                 parts.LogicalParent = logicalSchemaPath.Substring(0, lastDelimiterIndex);
                 parts.Name = logicalSchemaPath.Substring(lastDelimiterIndex + 1);
                 parts.FullLogicalPath = $"{parts.LogicalParent}:{parts.Name}".Replace("::", ":");
-                parts.ParentDiskPath = System.IO.Path.Join(_core.Settings.SchemaPath, parts.LogicalParent.Replace(':', '\\'));
-                parts.FullDiskPath = System.IO.Path.Join(parts.ParentDiskPath, parts.Name);
+                parts.ParentDiskPath = Path.Join(_core.Settings.SchemaPath, parts.LogicalParent.Replace(':', '\\'));
+                parts.FullDiskPath = Path.Join(parts.ParentDiskPath, parts.Name);
             }
             else {
                 parts.Name = logicalSchemaPath;
                 parts.LogicalParent = "";
                 parts.FullLogicalPath = logicalSchemaPath;
                 parts.ParentDiskPath = _core.Settings.SchemaPath;
-                parts.FullDiskPath = System.IO.Path.Join(_core.Settings.SchemaPath, parts.Name);
+                parts.FullDiskPath = Path.Join(_core.Settings.SchemaPath, parts.Name);
             }
 
             return parts;

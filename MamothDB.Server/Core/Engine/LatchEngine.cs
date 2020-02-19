@@ -28,14 +28,14 @@ namespace MamothDB.Server.Core.Engine
         {
             AcquireSingleSchemaLatch(session, logicalSchemaPath, latchMode);
 
-            var schemaInfo = _core.Schema.Parse(logicalSchemaPath);
+            var schemaInfo = _core.Schema.Parse(session, logicalSchemaPath);
 
             //Place shared locks on all parents of the schema,
-            schemaInfo = _core.Schema.Parse(schemaInfo.LogicalParent);
+            schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
             while (string.IsNullOrEmpty(schemaInfo.Name) == false)
             {
                 AcquireSingleSchemaLatch(session, schemaInfo.FullLogicalPath, LatchMode.Shared);
-                schemaInfo = _core.Schema.Parse(schemaInfo.LogicalParent);
+                schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
             } 
         }
 
@@ -62,14 +62,14 @@ namespace MamothDB.Server.Core.Engine
         /// <param name="latchMode"></param>
         public void AcquireDocumentLatch(MetaSession session, string logicalDocumentPath, LatchMode latchMode)
         {
-            var schemaInfo = _core.Schema.Parse(logicalDocumentPath);
+            var schemaInfo = _core.Schema.Parse(session, logicalDocumentPath);
 
             //Place shared locks on all parents of the document.
-            schemaInfo = _core.Schema.Parse(schemaInfo.LogicalParent);
+            schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
             while (string.IsNullOrEmpty(schemaInfo.Name) == false)
             {
                 AcquireSingleSchemaLatch(session, schemaInfo.FullLogicalPath, LatchMode.Shared);
-                schemaInfo = _core.Schema.Parse(schemaInfo.LogicalParent);
+                schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
             }
 
             //Get or add a new latch on the object.

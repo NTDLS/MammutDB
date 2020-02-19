@@ -37,7 +37,7 @@ namespace MamothDB.Server.Controllers
 
             try
             {
-                var schemaInfo = _core.Schema.Parse(action.Path);
+                var schemaInfo = _core.Schema.Parse(session, action.Path);
                 var parts = schemaInfo.FullLogicalPath.Split(':');
 
                 StringBuilder builtSchema = new StringBuilder();

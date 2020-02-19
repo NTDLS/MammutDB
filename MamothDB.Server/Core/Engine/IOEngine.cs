@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace MamothDB.Server.Core.Engine
 {
@@ -24,8 +25,26 @@ namespace MamothDB.Server.Core.Engine
 
         public bool DirectoryExists(MetaSession session, string path)
         {
+            if (session.CurrentTransaction.DeferredIO.ContainsFilePath(path))
+            {
+                //The directory might not yet exist, but its in the cache.
+                return true;
+            }
+
             //TODO: need to track this as a lock:
             return Directory.Exists(path);
+        }
+
+        public bool FileExists(MetaSession session, string path)
+        {
+            if(session.CurrentTransaction.DeferredIO.ContainsFilePath(path))
+            {
+                //The file might not yet exist, but its in the cache.
+                return true;
+            }
+
+            //TODO: need to track this as a lock:
+            return File.Exists(path);
         }
 
         public void CreateDirectory(MetaSession session, string path)
@@ -84,21 +103,26 @@ namespace MamothDB.Server.Core.Engine
         /// <param name="deserializedObject"></param>
         public void PutJson<T>(MetaSession session, string filePath, T deserializedObject)
         {
-            string key = Utility.FileSystemPathToKey(filePath);
+            string cacheKey = Utility.FileSystemPathToKey(filePath);
 
-            string serialized = JsonConvert.SerializeObject(deserializedObject);
+            bool deferDiskWrite = session.CurrentTransaction.DeferredIO.RecordDeferredDiskIO(cacheKey, filePath, deserializedObject, Constants.IOFormat.JSON);
+            if (deferDiskWrite == false)
+            {
+                string serialized = JsonConvert.SerializeObject(deserializedObject);
+                File.WriteAllText(filePath, serialized);
+            }
+
+            int objectSize = Marshal.ReadInt32(deserializedObject.GetType().TypeHandle.Value, 4);
 
             var options = new MemoryCacheEntryOptions()
             {
-                Size = serialized.Length
+                Size = objectSize
                 //TODO: Consider expirations.
             };
 
-            _memCache.Set<T>(key, deserializedObject, options);
+            _memCache.Set<T>(cacheKey, deserializedObject, options);
 
             session.CurrentTransaction.RecordFileWrite(filePath);
-
-            File.WriteAllText(filePath, serialized);
         }
 
         /// <summary>
@@ -167,26 +191,21 @@ namespace MamothDB.Server.Core.Engine
         /// <param name="deserializedObject"></param>
         public void PutPBuf<T>(MetaSession session, string filePath, T deserializedObject)
         {
-            string key = Utility.FileSystemPathToKey(filePath);
+            string cacheKey = Utility.FileSystemPathToKey(filePath);
 
-            long serializedLength = 0;
-
-            session.CurrentTransaction.RecordFileWrite(filePath);
-
-            using (var file = File.Create(filePath))
+            bool deferDiskWrite = session.CurrentTransaction.DeferredIO.RecordDeferredDiskIO(cacheKey, filePath, deserializedObject, Constants.IOFormat.PBuf);
+            if (deferDiskWrite == false)
             {
-                ProtoBuf.Serializer.Serialize(file, deserializedObject);
-                serializedLength = file.Length;
-                file.Close();
+                using (var file = File.Create(filePath))
+                {
+                    ProtoBuf.Serializer.Serialize(file, deserializedObject);
+                    file.Close();
+                }
             }
 
-            var options = new MemoryCacheEntryOptions()
-            {
-                Size = serializedLength
-                //TODO: Consider expirations.
-            };
+            _memCache.Set<T>(cacheKey, deserializedObject);
 
-            _memCache.Set<T>(key, deserializedObject, options);
+            session.CurrentTransaction.RecordFileWrite(filePath);
         }
     }
 }

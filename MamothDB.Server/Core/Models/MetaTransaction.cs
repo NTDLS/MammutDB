@@ -19,6 +19,7 @@ namespace MamothDB.Server.Core.Models
         /// </summary>
         public bool IsImplicit { get; private set; }
         public Guid Id { get; private set; }
+        public DeferredDiskIO DeferredIO { get; private set; }
 
         /// <summary>
         /// This collection is ONLY used to serialize to the undo log. It is not for iteration.
@@ -30,6 +31,7 @@ namespace MamothDB.Server.Core.Models
             _core = core;
             IsImplicit = false;
             Id = transactionId;
+            DeferredIO = new DeferredDiskIO(core);
         }
 
         public MetaTransaction(ServerCore core, MetaSession session, bool isImplicit)
@@ -38,6 +40,7 @@ namespace MamothDB.Server.Core.Models
             IsImplicit = isImplicit;
             _session = session;
             Id = Guid.NewGuid();
+            DeferredIO = new DeferredDiskIO(core);
         }
 
         public string TransactionBackupPath
@@ -136,6 +139,9 @@ namespace MamothDB.Server.Core.Models
                 {
                     Directory.Delete(TransactionBackupPath, true);
                 }
+
+                DeferredIO.Commit();
+
                 return true;
             }
 
