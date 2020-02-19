@@ -4,16 +4,47 @@ using System.Threading.Tasks;
 
 namespace Mamoth.Client.API
 {
-    public class SchemaClient : MamothBase
+    public class SchemaClient : MamothAPI
     {
-        private MamothClientBase _client;
+        private MamothClient _client;
         private const string _apiBase = "api/Schema";
 
-        public SchemaClient(MamothClientBase client)
+        public SchemaClient(MamothClient client)
             : base(client)
         {
             _client = client;
         }
+
+        /// <summary>
+        /// Creates all schemas in a linage.
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public ActionResponseBase CreateAll(string logicalSchemaPath)
+        {
+            var action = new ActionRequestSchema(_client.Token.SessionId)
+            {
+                Path = logicalSchemaPath
+            };
+
+            return Submit<ActionRequestSchema, ActionResponseBase>($"{_apiBase}/CreateAll", action);
+        }
+
+        /// <summary>
+        /// Creates all schemas in a linage.
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public async Task<ActionResponseBase> CreateAllAsync(string logicalSchemaPath)
+        {
+            var action = new ActionRequestSchema(_client.Token.SessionId)
+            {
+                Path = logicalSchemaPath
+            };
+
+            return (await SubmitAsync<ActionRequestSchema, ActionResponseBase>($"{_apiBase}/CreateAll", action));
+        }
+
 
         /// <summary>
         /// Creates a single schema returns its name and id.

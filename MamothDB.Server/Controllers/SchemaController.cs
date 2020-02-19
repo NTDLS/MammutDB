@@ -28,6 +28,43 @@ namespace MamothDB.Server.Controllers
         }
 
         [HttpPost]
+        public ActionResponseBase CreateAll([FromBody]ActionRequestSchema action)
+        {
+            _logger.LogDebug($"API:{MamothUtility.GetCurrentMethod()}");
+
+            var result = new ActionResponseBase();
+            var session = _core.Session.ObtainSession(action.SessionId);
+
+            try
+            {
+                var schemaInfo = _core.Schema.Parse(action.Path);
+                var parts = schemaInfo.FullLogicalPath.Split(':');
+
+                StringBuilder builtSchema = new StringBuilder();
+
+                foreach (var part in parts)
+                {
+                    builtSchema.Append($"{part}:");
+                    _core.Schema.Create(session, builtSchema.ToString().TrimEnd(':'));
+                }
+
+                //var schemaInfo = _core.Schema.Create(session, action.Path);
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Call failed with an exception: " + ex.Message;
+                _logger.LogError(result.Message);
+            }
+            finally
+            {
+                session.CommitImplicitTransaction();
+            }
+            return result;
+        }
+
+        [HttpPost]
         public ActionResponseSchema Create([FromBody]ActionRequestSchema action)
         {
             _logger.LogDebug($"API:{MamothUtility.GetCurrentMethod()}");

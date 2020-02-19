@@ -7,12 +7,12 @@ using Newtonsoft.Json;
 
 namespace Mamoth.Client.API
 {
-    public class DocumentClient : MamothBase
+    public class DocumentClient : MamothAPI
     {
-        private MamothClientBase _client;
+        private MamothClient _client;
         private const string _apiBase = "api/Document";
 
-        public DocumentClient(MamothClientBase client)
+        public DocumentClient(MamothClient client)
             : base(client)
         {
             _client = client;

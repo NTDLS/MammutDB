@@ -61,7 +61,5 @@ namespace MamothDB.Server.Core.Models.Persist
                 throw new Exception("Transaction undo type not implemented.");
             }
         }
-
-
     }
 }

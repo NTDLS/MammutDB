@@ -16,40 +16,15 @@ namespace Mamoth.TestHarness
     {
         static void Main(string[] args)
         {
-            //CreateSchemaWithPool();
-            //CreateSchemaWithSingleConnection();
-            DumpWordList();
+            //CreateSchema();
+            DumpRootWords();
         }
 
-        private static void CreateSchemaWithPool()
-        {
-            using (var pool = new MamothConnectionPool("https://localhost:5001", "root", "p@ssWord!"))
-            {
-                using (var connection = pool.GetConnection())
-                {
-                    connection.Client.Transaction.Enlist();
-                    connection.Client.Schema.Create("AR");
-                    connection.Client.Schema.Create("AR:Sales");
-                    connection.Client.Schema.Create("AR:Sales:Orders");
-                    connection.Client.Schema.Create("AR:Sales:People");
-                    connection.Client.Schema.Create("AR:Sales:People:Terminated");
-                    connection.Client.Schema.Create("AR:Customers");
-                    connection.Client.Schema.Create("AR:Customers:Prospects");
-                    connection.Client.Schema.Create("AR:Customers:Contracts");
-                    connection.Client.Transaction.Commit();
-
-                    //var result = connection.Client.Schema.Get("AR:Sales");
-                    //Console.WriteLine($"Name: {result.Name}, Id: {result.Id}, Path: {result.Path}");
-                }
-            }
-        }
-
-        private static void CreateSchemaWithSingleConnection()
+        private static void CreateSchema()
         {
             using (var client = new MamothClient("https://localhost:5001", "root", "p@ssWord!"))
             {
                 client.Transaction.Enlist();
-
                 client.Schema.Create("AR");
                 client.Schema.Create("AR:Sales");
                 client.Schema.Create("AR:Sales:Orders");
@@ -58,16 +33,60 @@ namespace Mamoth.TestHarness
                 client.Schema.Create("AR:Customers");
                 client.Schema.Create("AR:Customers:Prospects");
                 client.Schema.Create("AR:Customers:Contracts");
-
                 client.Transaction.Commit();
 
-                //var serverVersion = client.Server.Settings.GetVersion();
-                //Console.WriteLine($"{serverVersion.Name} v{serverVersion.Version}");
-                client.Logout();
+                //var result = connection.Client.Schema.Get("AR:Sales");
+                //Console.WriteLine($"Name: {result.Name}, Id: {result.Id}, Path: {result.Path}");
             }
         }
 
-        public static void DumpWordList()
+        public static void DumpRootWords()
+        {
+            var sqlConnectionStringBuilder = new SqlConnectionStringBuilder()
+            {
+                InitialCatalog = "WordList",
+                DataSource = "localhost",
+                IntegratedSecurity = true
+            };
+
+            using (var sqlConnection = new SqlConnection(sqlConnectionStringBuilder.ToString()))
+            {
+                sqlConnection.Open();
+
+                using (var client = new MamothClient("https://localhost:5001", "root", "p@ssWord!"))
+                {
+                    client.Transaction.Enlist();
+
+                    client.Schema.CreateAll("Word:Synonym");
+
+                    var tSQL = "SELECT TOP 100 W.Id, W.[Text] FROM Word as W WHERE EXISTS (SELECT 1 FROM [Synonym] as S WHERE S.SourceWordId = W.Id)";
+                    using (var sqlCommand = new SqlCommand(tSQL, sqlConnection))
+                    {
+                        using (var reader = sqlCommand.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int wordId = (int)reader["Id"];
+                                string wordText = reader["Text"].ToString();
+                                string schema = $"Word:Synonym:{wordText}";
+
+                                client.Schema.CreateAll(schema);
+
+                                DumpSubWords(client, schema, wordId);
+
+                                System.Threading.Thread.Sleep(250);
+                            }
+                        }
+                    }
+
+                    client.Transaction.Commit();
+                }
+
+                sqlConnection.Close();
+            }
+        }
+
+        public static void DumpSubWords(MamothClient client, string schema, int rootWordId)
         {
             var rand = new Random();
 
@@ -82,32 +101,37 @@ namespace Mamoth.TestHarness
             {
                 sqlConnection.Open();
 
-                using (var pool = new MamothConnectionPool("https://localhost:5001", "root", "p@ssWord!"))
+                client.Transaction.Enlist();
+
+                client.Schema.CreateAll(schema);
+
+                var tSQL = $"SELECT TOP 100 W.Id, W.[Text] FROM Word as W INNER JOIN [Synonym] as S ON S.TargetWordId = W.Id WHERE S.SourceWordId = {rootWordId}";
+                using (var sqlCommand = new SqlCommand(tSQL, sqlConnection))
                 {
-                    using (var connection = pool.GetConnection())
+                    using (var reader = sqlCommand.ExecuteReader())
                     {
-                        connection.Client.Transaction.Enlist();
-
-                        using (var sqlCommand = new SqlCommand("SELECT [Text] FROM Word", sqlConnection))
+                        while (reader.Read())
                         {
-                            using (var reader = sqlCommand.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    var cust = new Customer()
-                                    {
-                                        Name = reader["Text"].ToString(),
-                                        EIN = $"{rand.Next(10, 99)}-{rand.Next(10000, 99999)}",
-                                        AnnualRevenue = rand.NextDouble() * 100000,
-                                        NumberOfEmployees = rand.Next(10, 1000)
-                                    };
+                            int wordId = (int)reader["Id"];
+                            string wordText = reader["Text"].ToString();
+                            string subSchema = $"{schema}:{wordText}";
 
-                                    connection.Client.Document.Create("AR:Customers", cust);
-                                }
-                            }
+                            var cust = new Customer()
+                            {
+                                Name = wordText,
+                                EIN = $"{rand.Next(10, 99)}-{rand.Next(10000, 99999)}",
+                                AnnualRevenue = rand.NextDouble() * 100000,
+                                NumberOfEmployees = rand.Next(10, 1000)
+                            };
+
+                            client.Document.Create(schema, cust);
+
+                            //DumpSubWords(subSchema, wordId);
+
+                            System.Threading.Thread.Sleep(250);
                         }
 
-                        connection.Client.Transaction.Commit();
+                        client.Transaction.Commit();
                     }
                 }
 

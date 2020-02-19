@@ -1,53 +1,90 @@
-﻿using Mamoth.Common.Payload.Model;
+﻿using Mamoth.Client.API;
+using Mamoth.Common.Payload.Model;
 using System;
+using System.Net.Http;
 
 namespace Mamoth.Client
 {
-    /*
-    using (var client = new MamothClient("https://localhost:5001", "root", ""))
+    public class MamothClient : IDisposable
     {
-        client.Schema.Create("AR");
-        client.Schema.Create("AR:Sales");
-        client.Schema.Create("AR:Sales:Orders");
-        client.Schema.Create("AR:Sales:People");
-        client.Schema.Create("AR:Sales:People:Terminated");
-        client.Schema.Create("AR:Customers");
-        client.Schema.Create("AR:Customers:Prospects");
-        client.Schema.Create("AR:Customers:Contracts");
+        public HttpClient Client { get; private set; }
+        public LoginToken Token { get; set; }
+        public SecurityClient Security { get; private set; }
+        public SchemaClient Schema { get; private set; }
+        public TransactionClient Transaction { get; private set; }
+        public DocumentClient Document { get; private set; }
 
-        client.Logout();
-    }
-    */
-    public class MamothClient : MamothClientBase, IDisposable
-    {
-        public MamothClient(string baseAddress, TimeSpan commandTimeout)
-            : base(baseAddress, commandTimeout)
+        protected void Initialize(string baseAddress, TimeSpan commandTimeout, string username = "", string password = "")
         {
+            Client = new HttpClient();
+            Client.BaseAddress = new Uri(baseAddress);
+            Client.Timeout = commandTimeout;
+
+            Token = null;
+
+            Security = new SecurityClient(this);
+            Schema = new SchemaClient(this);
+            Transaction = new TransactionClient(this);
+            Document = new DocumentClient(this);
+
+            if (string.IsNullOrWhiteSpace(username) == false)
+            {
+                Security.Login(username, password);
+            }
+        }
+
+        #region ~CTor
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // get rid of managed resources:
+                if (this.Token.IsValid)
+                {
+                    this.Logout();
+                }
+            }
+            // get rid of unmanaged resources:
+        }
+
+        public MamothClient(string baseAddress, TimeSpan commandTimeout)
+        {
+            Initialize(baseAddress, commandTimeout);
         }
 
         public MamothClient(string baseAddress)
-            : base(baseAddress)
         {
+            Initialize(baseAddress, new TimeSpan(0, 0, 1, 0, 0));
         }
 
         public MamothClient(string baseAddress, string username, string password)
-            : base(baseAddress, username, password)
         {
+            Initialize(baseAddress, new TimeSpan(0, 0, 1, 0, 0), username, password);
+
         }
 
         public MamothClient(string baseAddress, TimeSpan commandTimeout, string username, string password)
-            : base(baseAddress, commandTimeout, username, password)
         {
+            Initialize(baseAddress, commandTimeout, username, password);
         }
 
-        public new LoginToken Login(string username, string password)
+        #endregion
+
+        protected LoginToken Login(string username, string password)
         {
-            return base.Login(username, password);
+            return Security.Login(username, password);
         }
 
-        public new  void Logout()
+        protected void Logout()
         {
-            base.Security.Logout();
+            Security.Logout();
         }
     }
 }

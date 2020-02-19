@@ -65,7 +65,13 @@ namespace MamothDB.Server.Core.Engine
 
             var schemaInfo = Parse(logicalSchemaPath);
 
-            var collection = _core.IO.GetJson<MetaSchemaCollection>(session, schemaInfo.ParentSchemaCatalog);
+            var parentSchemaInfo = Parse(schemaInfo.LogicalParent);
+            if (parentSchemaInfo.Exists == false)
+            {
+                throw new Exception("The specified parent schema does not exist.");
+            }
+
+            var collection = _core.IO.GetJson<MetaSchemaCollection>(session, parentSchemaInfo.SchemaCatalog);
 
             var existingSchema = collection.GetByName(schemaInfo.Name);
             if (existingSchema != null)

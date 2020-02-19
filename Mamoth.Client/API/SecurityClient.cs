@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Mamoth.Client.API
 {
-    public class SecurityClient : MamothBase
+    public class SecurityClient : MamothAPI
     {
-        private MamothClientBase _client;
+        private MamothClient _client;
         private const string _apiBase = "api/Security";
 
-        public SecurityClient(MamothClientBase client)
+        public SecurityClient(MamothClient client)
             : base(client)
         {
             _client = client;

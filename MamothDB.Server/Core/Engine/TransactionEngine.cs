@@ -38,11 +38,11 @@ namespace MamothDB.Server.Core.Engine
 
         public void Enlist(MetaSession session)
         {
-            if (session.CurrentTransaction != null)
+            if (session.CurrentTransaction == null)
             {
-                throw new Exception("Transaction is already open.");
+                session.CurrentTransaction = new MetaTransaction(_core, session, false);
             }
-            session.CurrentTransaction = new MetaTransaction(_core, session, false);
+            session.CurrentTransaction.Enlist();
         }
 
         /// <summary>
@@ -56,6 +56,7 @@ namespace MamothDB.Server.Core.Engine
             {
                 session.CurrentTransaction = new MetaTransaction(_core, session, true);
             }
+            session.CurrentTransaction.Enlist();
         }
 
         public void Commit(MetaSession session)
@@ -64,7 +65,10 @@ namespace MamothDB.Server.Core.Engine
             {
                 throw new Exception("No transaction is active.");
             }
-            session.CurrentTransaction.Commit();
+            if (session.CurrentTransaction.Commit())
+            {
+                session.CurrentTransaction = null;
+            }
         }
 
         public void Rollback(MetaSession session)
@@ -74,6 +78,7 @@ namespace MamothDB.Server.Core.Engine
                 throw new Exception("No transaction is active.");
             }
             session.CurrentTransaction.Rollback();
+            session.CurrentTransaction = null;
         }
     }
 }

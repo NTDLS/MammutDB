@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace Mamoth.Client.API
 {
-    public class TransactionClient : MamothBase
+    public class TransactionClient : MamothAPI
     {
-        private MamothClientBase _client;
+        private MamothClient _client;
         private const string _apiBase = "api/Transaction";
 
-        public TransactionClient(MamothClientBase client)
+        public TransactionClient(MamothClient client)
             : base(client)
         {
             _client = client;

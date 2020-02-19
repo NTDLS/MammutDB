@@ -6,13 +6,13 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mamoth.Client
+namespace Mamoth.Client.API
 {
-    public class MamothBase
+    public class MamothAPI
     {
-        private MamothClientBase _mamothClient;
+        private MamothClient _mamothClient;
 
-        public MamothBase(MamothClientBase client)
+        public MamothAPI(MamothClient client)
         {
             this._mamothClient = client;
         }
