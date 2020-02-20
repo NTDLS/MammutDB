@@ -74,10 +74,9 @@ namespace Mammut.Server.Controllers
 
             try
             {
-                var schemaInfo = _core.Schema.Create(session, action.Path);
-                result.Name = schemaInfo.Name;
-                result.Id = schemaInfo.Id;
-                result.Path = schemaInfo.LogicalPath;
+                var metaSchema = _core.Schema.Create(session, action.Path);
+                result.Name = metaSchema.Name;
+                result.Id = metaSchema.Id;
                 result.Success = true;
             }
             catch (Exception ex)
@@ -104,10 +103,9 @@ namespace Mammut.Server.Controllers
 
             try
             {
-                var schemaInfo = _core.Schema.Get(session, action.Path);
-                result.Name = schemaInfo.Name;
-                result.Id = schemaInfo.Id;
-                result.Path = schemaInfo.LogicalPath;
+                var metaSchema = _core.Schema.Get(session, action.Path);
+                result.Name = metaSchema.Name;
+                result.Id = metaSchema.Id;
                 result.Success = true;
             }
             catch (Exception ex)

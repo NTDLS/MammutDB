@@ -38,8 +38,7 @@ namespace Mammut.Server.Controllers
 
             try
             {
-                var documentInfo = _core.Document.Create(session, action.Path, action.Document);
-                result.Id = documentInfo.Id;
+                result.Id = _core.Document.Create(session, action.Path, action.Document);
                 result.Success = true;
             }
             catch (Exception ex)

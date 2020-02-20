@@ -19,7 +19,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="schemaPath"></param>
         /// <returns></returns>
-        public BasicDocumentInfo Create(Session session, string logicalSchemaPath, Common.Payload.Model.Document document)
+        public Guid Create(Session session, string logicalSchemaPath, Common.Payload.Model.Document document)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Shared);
 
@@ -45,7 +45,7 @@ namespace Mammut.Server.Core.Engine
 
             _core.IO.PutJson(session, schemaInfo.DocumentCatalog, collection);
 
-            return new BasicDocumentInfo() { Id = document.Id };
+            return document.Id;
         }
 
         /// <summary>

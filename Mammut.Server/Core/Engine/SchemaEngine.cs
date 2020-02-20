@@ -52,7 +52,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="schemaPath"></param>
         /// <returns></returns>
-        public BasicSchemaInfo Create(Session session, string logicalSchemaPath)
+        public MetaSchema Create(Session session, string logicalSchemaPath)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
@@ -70,7 +70,7 @@ namespace Mammut.Server.Core.Engine
             if (existingSchema != null)
             {
                 //No need to hassle the user with an exception, just return the schema ID if it already exists.
-                return new BasicSchemaInfo { Id = existingSchema.Id, Name = existingSchema.Name, LogicalPath = schemaInfo.FullLogicalPath };
+                return new MetaSchema { Id = existingSchema.Id, Name = existingSchema.Name };
                 //throw new Exception("The schema already exists.");
             }
 
@@ -85,7 +85,7 @@ namespace Mammut.Server.Core.Engine
             collection.Add(metaSchema);
             _core.IO.PutJson(session, schemaInfo.ParentSchemaCatalog, collection);
 
-            return new BasicSchemaInfo { Id = metaSchema.Id, Name = metaSchema.Name, LogicalPath = schemaInfo.FullLogicalPath };
+            return new MetaSchema { Id = metaSchema.Id, Name = metaSchema.Name };
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
-        public BasicSchemaInfo Get(Session session, string logicalSchemaPath)
+        public MetaSchema Get(Session session, string logicalSchemaPath)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
@@ -108,10 +108,10 @@ namespace Mammut.Server.Core.Engine
             var existingSchema = collection.GetByName(schemaInfo.Name);
             if (existingSchema != null)
             {
-                return new BasicSchemaInfo { Id = existingSchema.Id, Name = existingSchema.Name, LogicalPath = schemaInfo.FullLogicalPath };
+                return new MetaSchema { Id = existingSchema.Id, Name = existingSchema.Name };
             }
 
-            return new BasicSchemaInfo();
+            return new MetaSchema();
         }
 
         /// <summary>
