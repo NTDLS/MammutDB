@@ -17,7 +17,12 @@ namespace Mamoth.TestHarness
         static void Main(string[] args)
         {
             //CreateSchema();
-            DumpRootWords();
+            //DumpRootWords();
+            //Exporter.ExportAll();
+
+            (new Repository.Production_ProductRepository()).Export_Production_Product();
+
+            Console.ReadLine();
         }
 
         private static void CreateSchema()

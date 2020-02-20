@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mamoth.Client", "Mamoth.Cli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mamoth.TestHarness", "Mamoth.TestHarness\Mamoth.TestHarness.csproj", "{E3820C2B-88CD-4BC7-B642-7FD7D964DF0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamoth.Common", "Mamoth.Common\Mamoth.Common.csproj", "{2AD6C572-E824-46AC-B828-A403672A1F4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mamoth.Common", "Mamoth.Common\Mamoth.Common.csproj", "{2AD6C572-E824-46AC-B828-A403672A1F4C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{DD4F50BA-AEC4-48C6-8B5A-7A5EB6C51BC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGeneration", "CodeGeneration\CodeGeneration.csproj", "{9DD983E0-F96F-4EFA-9245-1C6C0CBD9B13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +37,17 @@ Global
 		{2AD6C572-E824-46AC-B828-A403672A1F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AD6C572-E824-46AC-B828-A403672A1F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AD6C572-E824-46AC-B828-A403672A1F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DD983E0-F96F-4EFA-9245-1C6C0CBD9B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DD983E0-F96F-4EFA-9245-1C6C0CBD9B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DD983E0-F96F-4EFA-9245-1C6C0CBD9B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DD983E0-F96F-4EFA-9245-1C6C0CBD9B13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E3820C2B-88CD-4BC7-B642-7FD7D964DF0D} = {DD4F50BA-AEC4-48C6-8B5A-7A5EB6C51BC3}
+		{9DD983E0-F96F-4EFA-9245-1C6C0CBD9B13} = {DD4F50BA-AEC4-48C6-8B5A-7A5EB6C51BC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {58B13495-39A9-45DC-84EA-35CDCBD19D9E}
