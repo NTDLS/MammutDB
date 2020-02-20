@@ -1,1 +1,1 @@
-MamothDB
+MammutDB

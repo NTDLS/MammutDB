@@ -13,7 +13,7 @@
 <#
 	string connectionString = @"Server=.;integrated security=True;";
 	string databaseName = "AdventureWorks2008R2";
-	string projectNamespace = "Mamoth.TestHarness.Models";
+	string projectNamespace = "Mammut.TestHarness.Models";
 	string relativeOutputFilePath = null;
 	List<string> includeTables = new List<string>{ };
  
@@ -63,7 +63,7 @@ private <#= TemplateHelper.GetDotNetType(oneDatabase, oneColumn.DataType, oneCol
 	}
 }
 <#
-			relativeOutputFilePath = @".\..\Mamoth.TestHarness\Models\" + oneTable.Schema + "_" + oneTable.Name + ".cs";
+			relativeOutputFilePath = @".\..\Mammut.TestHarness\Models\" + oneTable.Schema + "_" + oneTable.Name + ".cs";
 			TemplateHelper.WriteTemplateOutputToFile(relativeOutputFilePath, Host, GenerationEnvironment);
 			GenerationEnvironment = new System.Text.StringBuilder();
 		}

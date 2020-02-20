@@ -14,7 +14,7 @@
 	string connectionString = @"Server=.;integrated security=True;";
 	string databaseName = "AdventureWorks2008R2";
 	string relativeOutputFilePath = null;
-	string strNamespace = "Mamoth.TestHarness";
+	string strNamespace = "Mammut.TestHarness";
 	string adoConnectionString = "\"Server=.;Database=" + databaseName + ";Trusted_Connection=True;\"";
 
 	List<string> includeTables = new List<string>{ };
@@ -55,7 +55,7 @@ namespace <#= strNamespace #>
 }
 
 <#
-			relativeOutputFilePath = @".\..\Mamoth.TestHarness\Exporter.cs";
+			relativeOutputFilePath = @".\..\Mammut.TestHarness\Exporter.cs";
 			TemplateHelper.WriteTemplateOutputToFile(relativeOutputFilePath, Host, GenerationEnvironment);
 			GenerationEnvironment = new System.Text.StringBuilder();
 #>

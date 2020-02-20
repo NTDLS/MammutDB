@@ -14,7 +14,7 @@
 	string connectionString = @"Server=.;integrated security=True;";
 	string databaseName = "AdventureWorks2008R2";
 	string relativeOutputFilePath = null;
-	string strNamespace = "Mamoth.TestHarness.Repository";
+	string strNamespace = "Mammut.TestHarness.Repository";
 	string strModelsNamespace = "Models";
 	string adoConnectionString = "\"Server=.;Database=" + databaseName + ";Trusted_Connection=True;\"";
 
@@ -34,8 +34,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
-using Mamoth.Client;
-using Mamoth.Common.Payload.Model;
+using Mammut.Client;
+using Mammut.Common.Payload.Model;
 
 namespace <#= strNamespace #>
 {
@@ -43,7 +43,7 @@ namespace <#= strNamespace #>
 	{        
 		public void Export_<#= oneTable.Schema #>_<#= oneTable.Name #>()
 		{
-            using (var client = new MamothClient("https://localhost:5001", "root", "p@ssWord!"))
+            using (var client = new MammutClient("https://localhost:5001", "root", "p@ssWord!"))
 			{
 
             //if(client.Schema.Exists("<#= databaseName #>:<#= oneTable.Schema #>:<#= oneTable.Name #>"))
@@ -139,7 +139,7 @@ int <#=variableName#> = dataReader.GetOrdinal("<#=oneColumn.Name#>");
 }
 
 <#
-			relativeOutputFilePath = @".\..\Mamoth.TestHarness\Repository\" + oneTable.Schema + "_" + oneTable.Name + "Repository.cs";
+			relativeOutputFilePath = @".\..\Mammut.TestHarness\Repository\" + oneTable.Schema + "_" + oneTable.Name + "Repository.cs";
 			TemplateHelper.WriteTemplateOutputToFile(relativeOutputFilePath, Host, GenerationEnvironment);
 			GenerationEnvironment = new System.Text.StringBuilder();
 		}
