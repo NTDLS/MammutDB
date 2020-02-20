@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using static Mammut.Server.Core.Constants;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
-    public class DeferredDiskIO
+    public class DeferredIO
     {
         private ServerCore _core;
-        private Dictionary<string, DeferredDiskIOObject> _collection;
+        private Dictionary<string, DeferredIOObject> _collection;
 
-        public DeferredDiskIO(ServerCore core)
+        public DeferredIO(ServerCore core)
         {
             _core = core;
-            _collection = new Dictionary<string, DeferredDiskIOObject>();
+            _collection = new Dictionary<string, DeferredIOObject>();
         }
 
         public bool ContainsFilePath(string filePath)
@@ -73,7 +73,7 @@ namespace Mammut.Server.Core.Models
                 }
                 else
                 {
-                    var wrapper = new DeferredDiskIOObject()
+                    var wrapper = new DeferredIOObject()
                     {
                         Hits = 1,
                         DeferredFormat = deferredFormat,

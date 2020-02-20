@@ -7,7 +7,7 @@ namespace Mammut.Server.Core.Models.Persist
     /// <summary>
     /// Represents a single transaction item. This item will define how to undo any action which was taken by the IO engine.
     /// </summary>
-    public class TransactionUndoItem
+    public class MetaTransactionUndoItem
     {
         public Guid Id { get; set; }
 

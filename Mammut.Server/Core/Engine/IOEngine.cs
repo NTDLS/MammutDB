@@ -1,4 +1,4 @@
-﻿using Mammut.Server.Core.Models;
+﻿using Mammut.Server.Core.State;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.IO;
@@ -23,7 +23,7 @@ namespace Mammut.Server.Core.Engine
             _memCache = new MemoryCache(memCacheOptions);
         }
 
-        public bool DirectoryExists(MetaSession session, string path)
+        public bool DirectoryExists(Session session, string path)
         {
             if (session.CurrentTransaction.DeferredIO.ContainsFilePath(path))
             {
@@ -35,7 +35,7 @@ namespace Mammut.Server.Core.Engine
             return Directory.Exists(path);
         }
 
-        public bool FileExists(MetaSession session, string path)
+        public bool FileExists(Session session, string path)
         {
             if (session.CurrentTransaction.DeferredIO.ContainsFilePath(path))
             {
@@ -47,7 +47,7 @@ namespace Mammut.Server.Core.Engine
             return File.Exists(path);
         }
 
-        public void CreateDirectory(MetaSession session, string path)
+        public void CreateDirectory(Session session, string path)
         {
             session.CurrentTransaction.RecordCreateDirectory(path);
             if (Directory.Exists(path) == false)
@@ -56,7 +56,7 @@ namespace Mammut.Server.Core.Engine
             }
         }
 
-        public void DeleteDirectory(MetaSession session, string path)
+        public void DeleteDirectory(Session session, string path)
         {
             //RecordDeleteDirectory actually moves the directory to the undo location.
             session.CurrentTransaction.RecordDeleteDirectory(path);
@@ -72,7 +72,7 @@ namespace Mammut.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public T GetJson<T>(MetaSession session, string filePath)
+        public T GetJson<T>(Session session, string filePath)
         {
             string key = Utility.FileSystemPathToKey(filePath);
 
@@ -102,7 +102,7 @@ namespace Mammut.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <param name="deserializedObject"></param>
-        public void PutJson<T>(MetaSession session, string filePath, T deserializedObject)
+        public void PutJson<T>(Session session, string filePath, T deserializedObject)
         {
             string cacheKey = Utility.FileSystemPathToKey(filePath);
 
@@ -155,7 +155,7 @@ namespace Mammut.Server.Core.Engine
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public T GetPBuf<T>(MetaSession session, string filePath)
+        public T GetPBuf<T>(Session session, string filePath)
         {
             string key = Utility.FileSystemPathToKey(filePath);
 
@@ -188,7 +188,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="deserializedObject"></param>
-        public void PutPBuf<T>(MetaSession session, string filePath, T deserializedObject)
+        public void PutPBuf<T>(Session session, string filePath, T deserializedObject)
         {
             string cacheKey = Utility.FileSystemPathToKey(filePath);
 

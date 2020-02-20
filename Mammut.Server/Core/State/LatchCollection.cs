@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using static Mammut.Server.Core.Constants;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
     /// <summary>
     /// Represents a collection of locks in a catalog.
     /// </summary>
     [Serializable]
-    public class MetaLatchCollection
+    public class LatchCollection
     {
-        Dictionary<string, MetaLatch> Catalog = new Dictionary<string, MetaLatch>();
+        Dictionary<string, Latch> Catalog = new Dictionary<string, Latch>();
 
         /// <summary>
         /// Adds new or gets an existig latch.
@@ -18,7 +18,7 @@ namespace Mammut.Server.Core.Models
         /// <param name="objectType"></param>
         /// <param name="fullObjectPath"></param>
         /// <returns></returns>
-        public MetaLatch AddOrGet(ObjectType objectType, string logicalSchemaPath)
+        public Latch AddOrGet(ObjectType objectType, string logicalSchemaPath)
         {
             string lookupKey = Utility.FileSystemPathToKey(logicalSchemaPath);
 
@@ -28,7 +28,7 @@ namespace Mammut.Server.Core.Models
             }
             else
             {
-                MetaLatch latch = new MetaLatch(logicalSchemaPath)
+                Latch latch = new Latch(logicalSchemaPath)
                 {
                     ObjectType = objectType
                 };

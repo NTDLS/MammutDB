@@ -1,6 +1,5 @@
-﻿using Mammut.Common.Payload.Model;
-using Mammut.Server.Core.Models;
-using Mammut.Server.Core.Models.Persist;
+﻿using Mammut.Server.Core.Models.Persist;
+using Mammut.Server.Core.State;
 using Mammut.Server.Types;
 using System;
 
@@ -20,7 +19,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="schemaPath"></param>
         /// <returns></returns>
-        public BasicDocumentInfo Create(MetaSession session, string logicalSchemaPath, Document document)
+        public BasicDocumentInfo Create(Session session, string logicalSchemaPath, Common.Payload.Model.Document document)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Shared);
 
@@ -54,7 +53,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
-        public MetaDocument GetById(MetaSession session, string logicalSchemaPath, Guid documentId)
+        public MetaDocument GetById(Session session, string logicalSchemaPath, Guid documentId)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Shared);
 

@@ -1,7 +1,7 @@
 ﻿using Mammut.Server.Core.Interfaces;
 using Newtonsoft.Json;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
     public class StartupOptions : IStartupOptions
     {

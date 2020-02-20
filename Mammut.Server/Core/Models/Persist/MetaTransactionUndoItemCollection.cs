@@ -7,11 +7,11 @@ namespace Mammut.Server.Core.Models.Persist
     /// Represents a collection of transactions. (undo items)
     /// </summary>
     [Serializable]
-    public class TransactionUndoItemCollection
+    public class MetaTransactionUndoItemCollection
     {
-        public List<TransactionUndoItem> Catalog = new List<TransactionUndoItem>();
+        public List<MetaTransactionUndoItem> Catalog = new List<MetaTransactionUndoItem>();
 
-        public void Add(TransactionUndoItem meta)
+        public void Add(MetaTransactionUndoItem meta)
         {
             Catalog.Add(meta);
         }

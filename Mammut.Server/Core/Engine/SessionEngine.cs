@@ -1,13 +1,6 @@
-﻿using Mammut.Common;
-using Mammut.Common.Payload.Model;
-using Mammut.Server.Core.Models;
-using Mammut.Server.Core.Models.Persist;
-using Mammut.Server.Types;
+﻿using Mammut.Server.Core.Models.Persist;
+using Mammut.Server.Core.State;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Mammut.Server.Core.Engine
 {
@@ -15,16 +8,16 @@ namespace Mammut.Server.Core.Engine
     {
         private ServerCore _core;
 
-        private MetaSessionCollection _collection = new MetaSessionCollection();
+        private SessionCollection _collection = new SessionCollection();
 
         public SessionEngine(ServerCore core)
         {
             _core = core;
         }
 
-        public MetaSession Add(MetaLogin login)
+        public Session Add(MetaLogin login)
         {
-            var session = new MetaSession()
+            var session = new Session()
             {
                 LoginId = login.Id,
                 Username = login.Username,
@@ -36,7 +29,7 @@ namespace Mammut.Server.Core.Engine
             return session;
         }
 
-        public void Remove(MetaSession session)
+        public void Remove(Session session)
         {
             _collection.Catalog.Remove(session);
         }
@@ -46,7 +39,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        public MetaSession ObtainSession(Guid sessionId, bool createImplitTransaction = true)
+        public Session ObtainSession(Guid sessionId, bool createImplitTransaction = true)
         {
             var session = _collection.Catalog.Find(o => o.SessionId == sessionId);
             if (session == null)

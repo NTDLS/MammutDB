@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
     /// <summary>
     /// Represents a session.
     /// </summary>
-    public class MetaSession
+    public class Session
     {
         public Guid SessionId { get; set; }
         public Guid LoginId { get; set; }
         public string Username { get; set; }
-        public MetaTransaction CurrentTransaction { get; set; }
+        public Transaction CurrentTransaction { get; set; }
 
         public void CommitImplicitTransaction()
         {
@@ -23,9 +23,9 @@ namespace Mammut.Server.Core.Models
             }
         }
 
-        public static MetaSession FromPayload(Mammut.Common.Payload.Model.Session login)
+        public static Session FromPayload(Mammut.Common.Payload.Model.Session login)
         {
-            return new MetaSession
+            return new Session
             {
                 LoginId = login.LoginId,
                 SessionId = login.SessionId,
@@ -33,7 +33,7 @@ namespace Mammut.Server.Core.Models
             };
         }
 
-        public static Mammut.Common.Payload.Model.Session ToPayload(MetaSession login)
+        public static Mammut.Common.Payload.Model.Session ToPayload(Session login)
         {
             return new Mammut.Common.Payload.Model.Session
             {

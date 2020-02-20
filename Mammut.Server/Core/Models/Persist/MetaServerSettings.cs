@@ -2,18 +2,18 @@
 
 namespace Mammut.Server.Core.Models.Persist
 {
-    public class ServerSettings
+    public class MetaServerSettings
     {
         public string RootPath { get; set; } = string.Empty;
         public long MaxCacheSize { get; set; } = 1024 * 1024;
 
         #region ~CTor.
 
-        public ServerSettings()
+        public MetaServerSettings()
         {
         }
 
-        public ServerSettings(string rootPath)
+        public MetaServerSettings(string rootPath)
         {
             RootPath = rootPath;
         }

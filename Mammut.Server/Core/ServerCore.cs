@@ -10,7 +10,7 @@ namespace Mammut.Server.Core
     public class ServerCore : IServerCore
     {
         public ILogger<ServerCore> Logger;
-        public ServerSettings Settings { get; private set; }
+        public MetaServerSettings Settings { get; private set; }
         public IOEngine IO { get; private set; }
         public SchemaEngine Schema { get; private set; }
         public SecurityEngine Security { get; private set; }
@@ -38,12 +38,12 @@ namespace Mammut.Server.Core
             {
                 LogInformation("Loading configuration.");
                 //The IOManager is not initialized yet, so read the data directly.
-                Settings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText(startOptions.ConfigFile));
+                Settings = JsonConvert.DeserializeObject<MetaServerSettings>(File.ReadAllText(startOptions.ConfigFile));
             }
             else
             {
                 LogInformation("Initializing new configuration.");
-                Settings = new ServerSettings(startOptions.RootPath)
+                Settings = new MetaServerSettings(startOptions.RootPath)
                 {
                     //TODO: Add additional startup options.
                 };

@@ -1,4 +1,4 @@
-﻿using Mammut.Server.Core.Models;
+﻿using Mammut.Server.Core.State;
 using static Mammut.Server.Core.Constants;
 
 namespace Mammut.Server.Core.Engine
@@ -7,13 +7,13 @@ namespace Mammut.Server.Core.Engine
     {
         private ServerCore _core;
 
-        private MetaLatchCollection _latches;
+        private LatchCollection _latches;
 
         public LatchEngine(ServerCore core)
         {
             _core = core;
 
-            _latches = new MetaLatchCollection();
+            _latches = new LatchCollection();
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Mammut.Server.Core.Engine
         /// <param name="session"></param>
         /// <param name="logicalSchemaPath"></param>
         /// <param name="latchMode"></param>
-        public void AcquireSchemaLatch(MetaSession session, string logicalSchemaPath, LatchMode latchMode)
+        public void AcquireSchemaLatch(Session session, string logicalSchemaPath, LatchMode latchMode)
         {
             AcquireSingleSchemaLatch(session, logicalSchemaPath, latchMode);
 
@@ -39,7 +39,7 @@ namespace Mammut.Server.Core.Engine
             } 
         }
 
-        private void AcquireSingleSchemaLatch(MetaSession session, string logicalSchemaPath, LatchMode latchMode)
+        private void AcquireSingleSchemaLatch(Session session, string logicalSchemaPath, LatchMode latchMode)
         {
             //Get or add a new latch on the object.
             var latch = _latches.AddOrGet(Constants.ObjectType.Schema, logicalSchemaPath);
@@ -60,7 +60,7 @@ namespace Mammut.Server.Core.Engine
         /// <param name="session"></param>
         /// <param name="logicalDocumentPath"></param>
         /// <param name="latchMode"></param>
-        public void AcquireDocumentLatch(MetaSession session, string logicalDocumentPath, LatchMode latchMode)
+        public void AcquireDocumentLatch(Session session, string logicalDocumentPath, LatchMode latchMode)
         {
             var schemaInfo = _core.Schema.Parse(session, logicalDocumentPath);
 

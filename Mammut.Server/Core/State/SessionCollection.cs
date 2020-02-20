@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
     /// <summary>
     /// Represents a collection of sessions in a catalog.
     /// </summary>
     [Serializable]
-    public class MetaSessionCollection
+    public class SessionCollection
     {
-        public List<MetaSession> Catalog = new List<MetaSession>();
+        public List<Session> Catalog = new List<Session>();
 
-        public void Add(MetaSession session)
+        public void Add(Session session)
         {
             Catalog.Add(session);
         }
 
         public void Add(Mammut.Common.Payload.Model.Session session)
         {
-            Catalog.Add(MetaSession.FromPayload(session));
+            Catalog.Add(Session.FromPayload(session));
         }
 
-        public MetaSession GetById(Guid sessionId)
+        public Session GetById(Guid sessionId)
         {
             return Catalog.Find(o => o.SessionId == sessionId);
         }

@@ -1,7 +1,6 @@
-﻿using Mammut.Common.Payload.Model;
-using Mammut.Server.Core;
-using Mammut.Server.Core.Models;
+﻿using Mammut.Server.Core;
 using Mammut.Server.Core.Models.Persist;
+using Mammut.Server.Core.State;
 using System;
 using System.IO;
 
@@ -10,9 +9,9 @@ namespace Mammut.Server.Types
     public class SchemaInfo
     {
         private ServerCore _core;
-        private MetaSession _session;
+        private Session _session;
 
-        public SchemaInfo(ServerCore core, MetaSession session)
+        public SchemaInfo(ServerCore core, Session session)
         {
             _core = core;
             _session = session;
@@ -42,12 +41,12 @@ namespace Mammut.Server.Types
         }
 
         public string GetDocumentLogicalPath(Guid documentId) => $"{FullLogicalPath}:{documentId.ToString()}";
-        public string GetDocumentLogicalPath(Document document) => GetDocumentLogicalPath(document.Id);
+        public string GetDocumentLogicalPath(Common.Payload.Model.Document document) => GetDocumentLogicalPath(document.Id);
         public string GetDocumentLogicalPath(MetaDocument document) => GetDocumentLogicalPath(document.Id);
 
 
         public string GetDocumentFileName(Guid documentId) => Path.Combine(FullDiskPath, documentId.ToString()) + Constants.Filesystem.DocumentFileExtention;
-        public string GetDocumentFileName(Document document) => GetDocumentFileName(document.Id);
+        public string GetDocumentFileName(Common.Payload.Model.Document document) => GetDocumentFileName(document.Id);
         public string GetDocumentFileName(MetaDocument document) => GetDocumentFileName(document.Id);
 
         public bool Exists

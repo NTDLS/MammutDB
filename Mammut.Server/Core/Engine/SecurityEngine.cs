@@ -1,6 +1,5 @@
-﻿using Mammut.Common.Payload.Model;
-using Mammut.Server.Core.Models;
-using Mammut.Server.Core.Models.Persist;
+﻿using Mammut.Server.Core.Models.Persist;
+using Mammut.Server.Core.State;
 using System;
 using System.Linq;
 
@@ -15,7 +14,7 @@ namespace Mammut.Server.Core.Engine
             _core = core;
         }
 
-        public Session Login(Login login)
+        public Common.Payload.Model.Session Login(Common.Payload.Model.Login login)
         {
             var loginConnection = _core.IO.GetJsonDirty<MetaLoginCollection>(_core.Settings.LoginFile);
 
@@ -25,13 +24,13 @@ namespace Mammut.Server.Core.Engine
 
             if (foundLogin != null)
             {
-                return MetaSession.ToPayload(_core.Session.Add(foundLogin));
+                return Session.ToPayload(_core.Session.Add(foundLogin));
             }
 
             throw new Exception("Login failed.");
         }
 
-        public void Logout(MetaSession session)
+        public void Logout(Session session)
         {
             _core.Session.Remove(session);
         }

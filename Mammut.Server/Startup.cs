@@ -1,6 +1,6 @@
 using Autofac;
 using Mammut.Server.Core.Interfaces;
-using Mammut.Server.Core.Models;
+using Mammut.Server.Core.State;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

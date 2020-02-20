@@ -1,5 +1,5 @@
-﻿using Mammut.Server.Core.Models;
-using Mammut.Server.Core.Models.Persist;
+﻿using Mammut.Server.Core.Models.Persist;
+using Mammut.Server.Core.State;
 using Mammut.Server.Types;
 using System;
 using System.IO;
@@ -32,7 +32,7 @@ namespace Mammut.Server.Core.Engine
             }
         }
 
-        private void InitializeNewSchemaDirectory(MetaSession session, SchemaInfo schemaInfo)
+        private void InitializeNewSchemaDirectory(Session session, SchemaInfo schemaInfo)
         {
             if (_core.IO.DirectoryExists(session, schemaInfo.ParentDiskPath) == false)
             {
@@ -52,7 +52,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="schemaPath"></param>
         /// <returns></returns>
-        public BasicSchemaInfo Create(MetaSession session, string logicalSchemaPath)
+        public BasicSchemaInfo Create(Session session, string logicalSchemaPath)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
@@ -93,7 +93,7 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
-        public BasicSchemaInfo Get(MetaSession session, string logicalSchemaPath)
+        public BasicSchemaInfo Get(Session session, string logicalSchemaPath)
         {
             session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Exclusive);
 
@@ -118,7 +118,7 @@ namespace Mammut.Server.Core.Engine
         /// Splits a full schema into its path and name parts.
         /// </summary>
         /// <returns></returns>
-        public SchemaInfo Parse(MetaSession session, string logicalSchemaPath)
+        public SchemaInfo Parse(Session session, string logicalSchemaPath)
         {
             logicalSchemaPath = logicalSchemaPath.Trim(new char[] { ':' }).Replace("::", ":");
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using static Mammut.Server.Core.Constants;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
-    public class DeferredDiskIOObject
+    public class DeferredIOObject
     {
         public string CacheKey { get; set; }
         public string DiskPath { get; set; }

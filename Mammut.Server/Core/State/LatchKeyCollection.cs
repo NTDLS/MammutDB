@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
     /// <summary>
     /// Represents a collection of keys in a catalog.
     /// </summary>
     [Serializable]
-    public class MetaLatchKeyCollection
+    public class LatchKeyCollection
     {
-        private List<MetaLatchKey> Catalog = new List<MetaLatchKey>();
+        private List<LatchKey> Catalog = new List<LatchKey>();
 
-        public MetaLatchKeyCollection()
+        public LatchKeyCollection()
         {
         }
 
-        public void Add(MetaLatchKey key)
+        public void Add(LatchKey key)
         {
             Catalog.Add(key);
         }
 
-        public void Remove(MetaLatchKey key)
+        public void Remove(LatchKey key)
         {
             Catalog.Remove(key);
         }

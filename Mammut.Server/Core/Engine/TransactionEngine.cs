@@ -1,5 +1,4 @@
-﻿using Mammut.Server.Core.Models;
-using Microsoft.Extensions.Logging;
+﻿using Mammut.Server.Core.State;
 using System;
 using System.IO;
 using System.Linq;
@@ -31,16 +30,16 @@ namespace Mammut.Server.Core.Engine
             {
                 var transactionId = Path.GetFileName(transactionPath);
                 _core.LogInformation($"Rolling back transaction: {transactionId}.");
-                var transaction = new MetaTransaction(_core, Guid.Parse(transactionId));
+                var transaction = new Transaction(_core, Guid.Parse(transactionId));
                 transaction.Rollback();
             }
         }
 
-        public void Enlist(MetaSession session)
+        public void Enlist(Session session)
         {
             if (session.CurrentTransaction == null)
             {
-                session.CurrentTransaction = new MetaTransaction(_core, session, false);
+                session.CurrentTransaction = new Transaction(_core, session, false);
             }
             session.CurrentTransaction.Enlist();
         }
@@ -50,16 +49,16 @@ namespace Mammut.Server.Core.Engine
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        public void EnlistImplicit(MetaSession session)
+        public void EnlistImplicit(Session session)
         {
             if (session.CurrentTransaction == null)
             {
-                session.CurrentTransaction = new MetaTransaction(_core, session, true);
+                session.CurrentTransaction = new Transaction(_core, session, true);
             }
             session.CurrentTransaction.Enlist();
         }
 
-        public void Commit(MetaSession session)
+        public void Commit(Session session)
         {
             if (session.CurrentTransaction == null)
             {
@@ -71,7 +70,7 @@ namespace Mammut.Server.Core.Engine
             }
         }
 
-        public void Rollback(MetaSession session)
+        public void Rollback(Session session)
         {
             if (session.CurrentTransaction == null)
             {

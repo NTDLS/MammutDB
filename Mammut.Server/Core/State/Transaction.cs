@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using static Mammut.Server.Core.Constants;
 
-namespace Mammut.Server.Core.Models
+namespace Mammut.Server.Core.State
 {
-    public class MetaTransaction
+    public class Transaction
     {
-        private MetaSession _session;
+        private Session _session;
         private ServerCore _core;
-        private MetaLatchKeyCollection _latchKeys = new MetaLatchKeyCollection();
+        private LatchKeyCollection _latchKeys = new LatchKeyCollection();
         private HashSet<string> transactedItems = new HashSet<string>();
         private int _references = 0;
 
@@ -19,28 +19,28 @@ namespace Mammut.Server.Core.Models
         /// </summary>
         public bool IsImplicit { get; private set; }
         public Guid Id { get; private set; }
-        public DeferredDiskIO DeferredIO { get; private set; }
+        public DeferredIO DeferredIO { get; private set; }
 
         /// <summary>
         /// This collection is ONLY used to serialize to the undo log. It is not for iteration.
         /// </summary>
-        private TransactionUndoItemCollection _undoActions = new TransactionUndoItemCollection();
+        private MetaTransactionUndoItemCollection _undoActions = new MetaTransactionUndoItemCollection();
 
-        public MetaTransaction(ServerCore core, Guid transactionId)
+        public Transaction(ServerCore core, Guid transactionId)
         {
             _core = core;
             IsImplicit = false;
             Id = transactionId;
-            DeferredIO = new DeferredDiskIO(core);
+            DeferredIO = new DeferredIO(core);
         }
 
-        public MetaTransaction(ServerCore core, MetaSession session, bool isImplicit)
+        public Transaction(ServerCore core, Session session, bool isImplicit)
         {
             _core = core;
             IsImplicit = isImplicit;
             _session = session;
             Id = Guid.NewGuid();
-            DeferredIO = new DeferredDiskIO(core);
+            DeferredIO = new DeferredIO(core);
         }
 
         public string TransactionBackupPath
@@ -63,7 +63,7 @@ namespace Mammut.Server.Core.Models
         /// Adds a key to the transaction for an outstanding latch.
         /// </summary>
         /// <param name="latchKey"></param>
-        public void AddLatchKey(MetaLatchKey latchKey)
+        public void AddLatchKey(LatchKey latchKey)
         {
             _latchKeys.Add(latchKey);
         }
@@ -84,14 +84,14 @@ namespace Mammut.Server.Core.Models
         /// <param name="session"></param>
         /// <param name="logicalDocumentPath"></param>
         /// <param name="latchMode"></param>
-        public void AcquireDocumentLatch(MetaSession session, string logicalDocumentPath, LatchMode latchMode)
+        public void AcquireDocumentLatch(Session session, string logicalDocumentPath, LatchMode latchMode)
         {
             _core.Latch.AcquireDocumentLatch(_session, logicalDocumentPath, latchMode);
         }
 
         public void AddUndoAction(TransactionUndoAction undoAction, string originalPath)
         {
-            _undoActions.Add(new TransactionUndoItem
+            _undoActions.Add(new MetaTransactionUndoItem
             {
                 Id = Guid.NewGuid(),
                 OriginalPath = originalPath,
@@ -101,7 +101,7 @@ namespace Mammut.Server.Core.Models
 
         public void AddUndoAction(TransactionUndoAction undoAction, string originalPath, string backupPath)
         {
-            _undoActions.Add(new TransactionUndoItem
+            _undoActions.Add(new MetaTransactionUndoItem
             {
                 Id = Guid.NewGuid(),
                 OriginalPath = originalPath,
@@ -154,7 +154,7 @@ namespace Mammut.Server.Core.Models
         public void Rollback()
         {
             string txUndoCatalogFile = Path.Combine(_core.Settings.TransactionPath, Id.ToString(), Constants.Filesystem.TransactionUndoCatalog);
-            var undoCollection = _core.IO.GetJsonDirty<TransactionUndoItemCollection>(txUndoCatalogFile);
+            var undoCollection = _core.IO.GetJsonDirty<MetaTransactionUndoItemCollection>(txUndoCatalogFile);
             var undoActions = undoCollection.Catalog;
 
             undoActions.Reverse();
