@@ -17,8 +17,11 @@ namespace Mammut.Server.Core.State
 
         public bool ContainsFilePath(string filePath)
         {
-            string key = Utility.FileSystemPathToKey(filePath);
-            return _collection.ContainsKey(key);
+            lock (this)
+            {
+                string key = Utility.FileSystemPathToKey(filePath);
+                return _collection.ContainsKey(key);
+            }
         }
 
         /// <summary>

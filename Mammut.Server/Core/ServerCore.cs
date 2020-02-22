@@ -18,6 +18,7 @@ namespace Mammut.Server.Core
         public TransactionEngine Transaction { get; private set; }
         public LatchEngine Latch { get; private set; }
         public DocumentEngine Document { get; private set; }
+        public QueryEngine Query { get; private set; }
 
         public ServerCore(IStartupOptions startOptions, ILogger<ServerCore> logger)
         {
@@ -105,7 +106,9 @@ namespace Mammut.Server.Core
 
             LogInformation("Initializing document engine.");
             Document = new DocumentEngine(this);
-            
+
+            LogInformation("Initializing query engine.");
+            Query = new QueryEngine(this);
 
             LogInformation("Starting transaction recovery.");
             Transaction.Recover();

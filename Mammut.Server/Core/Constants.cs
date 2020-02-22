@@ -42,5 +42,44 @@
             DeleteFile,       //Delete the specified file
             DeleteDirectory   //Delete the specified file
         }
+
+        public enum QueryType
+        {
+            Select,
+            Insert,
+            Update,
+            Delete
+        }
+
+        public enum ConditionType
+        {
+            None, //This means that this is the first expression in the tree.
+            And,
+            Or
+        }
+
+        public enum ConditionValueType
+        {
+            /// <summary>
+            /// Denotes whether the value is a constant such as a string ot numeric value.
+            /// </summary>
+            Constant,
+            /// <summary>
+            /// Denotes whether the value represents an attribute name contained in a document.
+            /// </summary>
+            AttributeName
+        }
+
+        public enum ConditionQualifier
+        {
+            Equals,
+            Like,
+            NotEquals,
+            NotLike,
+            LessThan,
+            GreaterThan,
+            LessThanOrEqual,
+            GreaterThanOrEqual
+        }
     }
 }

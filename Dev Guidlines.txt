@@ -1,0 +1,6 @@
+
+
+
+* Do not include any "using Mammut.Common..." in the Mammut.Server project. All objects should be fully qualified.
+* Models which are saved to disk should be prefixed with "Meta...".
+* Any transformations to/from a "Mammut.Common.Payload" type should occur in the server in the form of "FromPayload" and "ToPayload" methods.

@@ -13,5 +13,6 @@ namespace Mammut.Server.Core.Interfaces
         public TransactionEngine Transaction { get; }
         public LatchEngine Latch { get; }
         public DocumentEngine Document { get; }
+        public QueryEngine Query { get; }
     }
 }

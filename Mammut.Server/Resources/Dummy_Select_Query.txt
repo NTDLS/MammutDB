@@ -1,0 +1,17 @@
+SELECT
+	*
+FROM
+	Production:Product
+WHERE
+	(
+		(
+			SafetyStockLevel < 10
+			OR SafetyStockLevel > 500
+		)
+		AND SafetyStockLevel <> 1000
+	)
+	AND (
+		Color = 'Silver'
+		OR Color = 'Black'
+	)
+	AND FinishedGoodsFlag = 1

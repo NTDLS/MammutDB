@@ -19,11 +19,21 @@ namespace Mammut.TestHarness
             //CreateSchema();
             //DumpRootWords();
             //Exporter.ExportAll();
+            //(new Repository.Production_ProductRepository()).Export_Production_Product();
 
-            (new Repository.Production_ProductRepository()).Export_Production_Product();
+            DummyQuery();
 
             Console.ReadLine();
         }
+
+        private static void DummyQuery()
+        {
+            using (var client = new MammutClient("https://localhost:5001", "root", "p@ssWord!"))
+            {
+                client.Query.ExecuteDummy();
+            }
+        }
+
 
         private static void CreateSchema()
         {

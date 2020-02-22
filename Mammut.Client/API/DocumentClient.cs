@@ -39,7 +39,7 @@ namespace Mammut.Client.API
         {
             var document = new Document()
             {
-                Text = JsonConvert.SerializeObject(documentContent)
+                Content = JsonConvert.SerializeObject(documentContent)
             };
 
             var action = new ActionRequestDocument(_client.Token.SessionId)
@@ -72,7 +72,7 @@ namespace Mammut.Client.API
         {
             var document = new Document()
             {
-                Text = JsonConvert.SerializeObject(documentContent)
+                Content = JsonConvert.SerializeObject(documentContent)
             };
 
             var action = new ActionRequestDocument(_client.Token.SessionId)

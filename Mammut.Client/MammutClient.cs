@@ -13,6 +13,7 @@ namespace Mammut.Client
         public SchemaClient Schema { get; private set; }
         public TransactionClient Transaction { get; private set; }
         public DocumentClient Document { get; private set; }
+        public QueryClient Query { get; private set; }
 
         protected void Initialize(string baseAddress, TimeSpan commandTimeout, string username = "", string password = "")
         {
@@ -26,6 +27,7 @@ namespace Mammut.Client
             Schema = new SchemaClient(this);
             Transaction = new TransactionClient(this);
             Document = new DocumentClient(this);
+            Query = new QueryClient(this);
 
             if (string.IsNullOrWhiteSpace(username) == false)
             {

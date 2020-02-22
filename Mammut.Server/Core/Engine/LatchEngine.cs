@@ -26,29 +26,40 @@ namespace Mammut.Server.Core.Engine
         /// <param name="latchMode"></param>
         public void AcquireSchemaLatch(Session session, string logicalSchemaPath, LatchMode latchMode)
         {
-            AcquireSingleSchemaLatch(session, logicalSchemaPath, latchMode);
-
-            var schemaInfo = _core.Schema.Parse(session, logicalSchemaPath);
-
-            //Place shared locks on all parents of the schema,
-            schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
-            while (string.IsNullOrEmpty(schemaInfo.Name) == false)
+            lock (CriticalSections.AcquireLock)
             {
-                AcquireSingleSchemaLatch(session, schemaInfo.FullLogicalPath, LatchMode.Shared);
+                AcquireSingleSchemaLatch(session, logicalSchemaPath, latchMode);
+
+                var schemaInfo = _core.Schema.Parse(session, logicalSchemaPath);
+
+                //Place shared locks on all parents of the schema,
                 schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
-            } 
+                while (string.IsNullOrEmpty(schemaInfo.Name) == false)
+                {
+                    AcquireSingleSchemaLatch(session, schemaInfo.FullLogicalPath, LatchMode.Shared);
+                    schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
+                }
+            }
         }
 
         private void AcquireSingleSchemaLatch(Session session, string logicalSchemaPath, LatchMode latchMode)
         {
-            //Get or add a new latch on the object.
-            var latch = _latches.AddOrGet(Constants.ObjectType.Schema, logicalSchemaPath);
+            lock (CriticalSections.AcquireLock)
+            {
+                //TODO: Lookup existing latches to see if there are any that are incompatible with this one.
+                //...
+                //...
+                //...
 
-            //Get a new key to the object.
-            var latchKey = latch.IssueKey(session.CurrentTransaction, latchMode);
+                //Get or add a new latch on the object.
+                var latch = _latches.AddOrGet(Constants.ObjectType.Schema, logicalSchemaPath);
 
-            //Give the latch key to the current transaction.
-            session.CurrentTransaction.AddLatchKey(latchKey);
+                //Get a new key to the object.
+                var latchKey = latch.IssueKey(session.CurrentTransaction, latchMode);
+
+                //Give the latch key to the current transaction.
+                session.CurrentTransaction.AddLatchKey(latchKey);
+            }
         }
 
 
@@ -62,24 +73,27 @@ namespace Mammut.Server.Core.Engine
         /// <param name="latchMode"></param>
         public void AcquireDocumentLatch(Session session, string logicalDocumentPath, LatchMode latchMode)
         {
-            var schemaInfo = _core.Schema.Parse(session, logicalDocumentPath);
-
-            //Place shared locks on all parents of the document.
-            schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
-            while (string.IsNullOrEmpty(schemaInfo.Name) == false)
+            lock (CriticalSections.AcquireLock)
             {
-                AcquireSingleSchemaLatch(session, schemaInfo.FullLogicalPath, LatchMode.Shared);
+                var schemaInfo = _core.Schema.Parse(session, logicalDocumentPath);
+
+                //Place shared locks on all parents of the document.
                 schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
+                while (string.IsNullOrEmpty(schemaInfo.Name) == false)
+                {
+                    AcquireSingleSchemaLatch(session, schemaInfo.FullLogicalPath, LatchMode.Shared);
+                    schemaInfo = _core.Schema.Parse(session, schemaInfo.LogicalParent);
+                }
+
+                //Get or add a new latch on the object.
+                var latch = _latches.AddOrGet(Constants.ObjectType.Document, logicalDocumentPath);
+
+                //Get a new key to the object.
+                var latchKey = latch.IssueKey(session.CurrentTransaction, latchMode);
+
+                //Give the latch key to the current transaction.
+                session.CurrentTransaction.AddLatchKey(latchKey);
             }
-
-            //Get or add a new latch on the object.
-            var latch = _latches.AddOrGet(Constants.ObjectType.Document, logicalDocumentPath);
-
-            //Get a new key to the object.
-            var latchKey = latch.IssueKey(session.CurrentTransaction, latchMode);
-
-            //Give the latch key to the current transaction.
-            session.CurrentTransaction.AddLatchKey(latchKey);
         }
     }
 }

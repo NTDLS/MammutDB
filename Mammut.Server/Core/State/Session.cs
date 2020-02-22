@@ -18,7 +18,10 @@ namespace Mammut.Server.Core.State
             {
                 if (CurrentTransaction.IsImplicit)
                 {
-                    CurrentTransaction.Commit();
+                    if (CurrentTransaction.Commit())
+                    {
+                        CurrentTransaction = null;
+                    }
                 }
             }
         }

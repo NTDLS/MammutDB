@@ -1,7 +1,10 @@
-﻿using Mammut.Server.Core.Models.Persist;
+﻿using Mammut.Server.Core.Models;
+using Mammut.Server.Core.Models.Persist;
 using Mammut.Server.Core.State;
 using Mammut.Server.Types;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace Mammut.Server.Core.Engine
 {
@@ -67,7 +70,7 @@ namespace Mammut.Server.Core.Engine
             session.CurrentTransaction.AcquireDocumentLatch(session, documentlogicalPath, Constants.LatchMode.Shared);
 
             var collection = _core.IO.GetJson<MetaDocumentCollection>(session, schemaInfo.DocumentCatalog);
-            if(collection.Catalog.Contains(documentId) == false)
+            if (collection.Catalog.Contains(documentId) == false)
             {
                 throw new Exception("The specified document does not exist.");
             }
@@ -77,5 +80,61 @@ namespace Mammut.Server.Core.Engine
 
             return document;
         }
+
+        /// <summary>
+        /// Gets existing document IDs by a condition.
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public List<Guid> GetIdsByCondition(Session session, string logicalSchemaPath, ConditionExpression conditions)
+        {
+            List<Guid> resultIDs = new List<Guid>();
+
+            session.CurrentTransaction.AcquireSchemaLatch(logicalSchemaPath, Constants.LatchMode.Shared);
+
+            var schemaInfo = _core.Schema.Parse(session, logicalSchemaPath);
+            if (schemaInfo.Exists == false)
+            {
+                throw new Exception("The specified schema does not exist.");
+            }
+
+            var collection = _core.IO.GetJson<MetaDocumentCollection>(session, schemaInfo.DocumentCatalog);
+
+            foreach (var documentId in collection.Catalog)
+            {
+                var documentlogicalPath = schemaInfo.GetDocumentFileName(documentId);
+                var documentFilePath = schemaInfo.GetDocumentFileName(documentId);
+
+                session.CurrentTransaction.AcquireDocumentLatch(session, documentlogicalPath, Constants.LatchMode.Shared);
+
+                var document = _core.IO.GetJson<MetaDocument>(session, documentFilePath);
+
+                JObject jsonContent = JObject.Parse(document.Content);
+
+                if (IsMatch(conditions, jsonContent))
+                {
+                }
+            }
+
+            //var documentFilePath = schemaInfo.GetDocumentFileName(documentId);
+            //var document = _core.IO.GetJson<MetaDocument>(session, documentFilePath);
+
+            return resultIDs;
+        }
+
+        bool IsMatch(ConditionExpression conditions, string documentText)
+        {
+            foreach (var statement in conditions.Statements)
+            {
+            }
+
+            foreach (var child in conditions.Children)
+            {
+            }
+
+            return false;
+        }
+
+
     }
 }
