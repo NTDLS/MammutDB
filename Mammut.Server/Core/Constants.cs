@@ -58,6 +58,13 @@
             Or
         }
 
+        public enum ConditionResult
+        {
+            Undefined,
+            True,
+            False
+        }
+
         public enum ConditionValueType
         {
             /// <summary>

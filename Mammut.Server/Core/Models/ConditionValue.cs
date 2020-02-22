@@ -19,5 +19,14 @@ namespace Mammut.Server.Core.Models
             ValueType = valueType;
             Value = value;
         }
+
+        public WorkingConditionValue ToWorkingConditionValue()
+        {
+            return new WorkingConditionValue()
+            {
+                Value = this.Value,
+                ValueType = this.ValueType
+            };
+        }
     }
 }

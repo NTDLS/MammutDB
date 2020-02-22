@@ -100,6 +100,8 @@ namespace Mammut.Server.Core.Engine
 
             var collection = _core.IO.GetJson<MetaDocumentCollection>(session, schemaInfo.DocumentCatalog);
 
+            var workingConditions = conditions.ToWorkingConditionExpression();
+
             foreach (var documentId in collection.Catalog)
             {
                 var documentlogicalPath = schemaInfo.GetDocumentFileName(documentId);
@@ -122,7 +124,7 @@ namespace Mammut.Server.Core.Engine
             return resultIDs;
         }
 
-        bool IsMatch(ConditionExpression conditions, string documentText)
+        bool IsMatch(ConditionExpression conditions, JObject documentContent)
         {
             foreach (var statement in conditions.Statements)
             {

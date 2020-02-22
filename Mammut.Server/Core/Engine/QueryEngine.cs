@@ -23,9 +23,9 @@ namespace Mammut.Server.Core.Engine
 
             ConditionExpression conditions = new ConditionExpression();
 
-            ConditionExpression exp1 = conditions.AddNew();
+            ConditionExpression exp1 = conditions.CreateChild();
 
-            ConditionExpression exp2 = conditions.AddNew();
+            ConditionExpression exp2 = conditions.CreateChild();
             exp2.Statements.Add(new ConditionStatement(Constants.ConditionType.None,
                 new ConditionValue(ConditionValueType.AttributeName, "SafetyStockLevel"),
                 ConditionQualifier.LessThan,
@@ -38,7 +38,7 @@ namespace Mammut.Server.Core.Engine
             exp1.Statements.Add(new ConditionStatement(Constants.ConditionType.And,
                 new ConditionValue(ConditionValueType.AttributeName, "SafetyStockLevel"), ConditionQualifier.NotEquals, new ConditionValue(ConditionValueType.Constant, 1000)));
 
-            ConditionExpression exp3 = conditions.AddNew(ConditionType.And);
+            ConditionExpression exp3 = conditions.CreateChild(ConditionType.And);
             exp3.Statements.Add(new ConditionStatement(Constants.ConditionType.Or,
                 new ConditionValue(ConditionValueType.AttributeName, "Color"), ConditionQualifier.Equals, new ConditionValue(ConditionValueType.Constant, "Silver")));
             exp3.Statements.Add(new ConditionStatement(Constants.ConditionType.Or,

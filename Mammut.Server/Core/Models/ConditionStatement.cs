@@ -23,5 +23,16 @@ namespace Mammut.Server.Core.Models
 			Qualifier = qualifier;
 			RightValue = rightValue;
 		}
+
+		public WorkingConditionStatement ToWorkingConditionStatement()
+		{
+			return new WorkingConditionStatement()
+			{
+				LogicalConnector = this.LogicalConnector,
+				Qualifier = this.Qualifier,
+				LeftValue = this.LeftValue.ToWorkingConditionValue(),
+				RightValue = this.RightValue.ToWorkingConditionValue()
+			};
+		}
 	}
 }
